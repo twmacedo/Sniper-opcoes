@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SNIPER TERMINAL — Skeleton Key v22.0</title>
+<title>SNIPER TERMINAL — Direct Link v23.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -120,9 +120,12 @@
   .atm-badge { background: var(--accent); color: #000; font-size: 8px; font-weight: 800; padding: 2px 4px; border-radius: 2px; margin-left: 6px; letter-spacing: 0.1em;}
   
   .del-row-btn { background: transparent; border: 1px solid var(--border2); color: var(--danger); width: 28px; height: 28px; border-radius: 6px; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer;}
-  .tag { padding: 4px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.05em; }
-  .tag-c { background: var(--accent-dim); color: var(--accent); }
-  .tag-p { background: var(--danger-dim); color: var(--danger); }
+  
+  .manual-adder { background: var(--surface2); border: 1px dashed var(--border2); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+  .ma-title { font-size: 10px; font-weight: 800; color: var(--accent2); letter-spacing: 0.1em; margin-bottom: 12px; text-transform: uppercase; display:flex; justify-content: space-between;}
+  .ma-inputs { display: flex; gap: 8px; margin-bottom: 10px; }
+  .ma-inputs input, .ma-inputs select { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 4px; font-size: 12px; font-family: 'Space Mono', monospace; width: 100%; outline: none;}
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 8px; }
 
   /* FINAL RESULT */
   #result { display: none; margin-bottom: 40px; }
@@ -226,13 +229,13 @@
   <header>
     <div class="logo-block">
       <div class="logo">SNIPER<span>.</span>TERM</div>
-      <div class="sub-logo">Pro Desk v22 Skeleton Key</div>
+      <div class="sub-logo">Pro Desk v23 Direct Link</div>
     </div>
-    <div class="settings-btn" onclick="alert('A sua API KEY está configurada internamente no código para este teste.')">🔑</div>
+    <div class="settings-btn" onclick="alert('A sua NOVA API KEY está ligada diretamente no núcleo para este teste.')">🔑</div>
   </header>
 
   <div class="status-bar">
-    <div class="badge-outline active"><div class="dot"></div> SMART EXECUTION ON</div>
+    <div class="badge-outline active" style="color:var(--accent); border-color:rgba(0,255,157,0.4);"><div class="dot"></div> API KEY CONNECTED</div>
     <div class="badge-outline mono" id="clock">--:--</div>
   </div>
 
@@ -258,6 +261,7 @@
       <div class="preview-area" id="previewChart"></div>
     </div>
     <button class="btn-main btn-green" id="btnOcr" disabled>Extrair Dados (OCR)</button>
+    <button class="btn-main btn-outline" style="margin-top:0;" onclick="forceManualMode()">Pular e Usar Modo Manual</button>
   </div>
 
   <div class="loader" id="loadingBlock">
@@ -284,6 +288,22 @@
         </table>
     </div>
 
+    <div class="manual-adder">
+      <div class="ma-title"><span>✍️ MODO MANUAL / CORREÇÃO</span></div>
+      <div class="ma-inputs">
+        <input type="number" id="ma-spot" placeholder="Preço Spot" onchange="updateSpotExpiry()">
+        <input type="text" id="ma-expiry" placeholder="Vencimento" onchange="updateSpotExpiry()">
+      </div>
+      <div class="ma-inputs grid-4">
+        <input type="number" id="ma-strike" placeholder="Strike">
+        <select id="ma-type"><option value="CALL">CALL</option><option value="PUT">PUT</option></select>
+        <input type="number" id="ma-bid" placeholder="Bid">
+        <input type="number" id="ma-ask" placeholder="Ask">
+        <input type="number" id="ma-theta" placeholder="Theta">
+      </div>
+      <button class="btn-main btn-outline" style="margin-top: 8px; padding: 12px; font-size:11px;" onclick="addManualRow()">+ ADICIONAR CONTRATO</button>
+    </div>
+
     <button class="btn-main btn-yellow" id="btnAnalyze" disabled>✓ Validar Mid-Prices & Gerar Tática</button>
     <button class="btn-main btn-outline" id="btnCancel">✖ Descartar Tudo</button>
   </div>
@@ -293,16 +313,15 @@
 </div>
 
 <script>
-// ─── CHAVE CHUMBADA A PEDIDO DO UTILIZADOR ───
-// AVISO DE SEGURANÇA: Apague esta chave no Google AI Studio após testar!
-const userApiKey = "AIzaSyAjACqci1OP8XH4FQkZoyzP7uUMWQP5gWg";
+// ─── CHAVE NOVA CHUMBADA DIRETAMENTE ───
+const userApiKey = "AIzaSyA1p3lQIBjJpuJef3QTTS9806nG0_iYpOI";
 
 let chainFiles = []; let chartFiles = []; let selectedAsset = 'ETH'; let validatedData = null; let abortController = null;
 
 function updateClock() { const d = new Date(); document.getElementById('clock').textContent = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
 setInterval(updateClock, 1000); updateClock();
 
-// COMPRESSÃO LEVE (Garante que a RAM do telemóvel não engasga)
+// COMPRESSÃO LEVE E SEGURA
 async function preprocessImage(file) {
   return new Promise((resolve, reject) => {
     const img = new Image(); const reader = new FileReader();
@@ -319,7 +338,7 @@ async function preprocessImage(file) {
             canvas.width = img.width * scale; canvas.height = drawHeight * scale;
             ctx.scale(scale, scale);
             ctx.drawImage(img, 0, cropTop, img.width, drawHeight, 0, 0, img.width, drawHeight);
-            resolve(canvas.toDataURL('image/jpeg', 0.6).split(',')[1]); // Qualidade 60% para super velocidade
+            resolve(canvas.toDataURL('image/jpeg', 0.6).split(',')[1]); 
         } catch(err) {
             resolve(e.target.result.split(',')[1]);
         }
@@ -360,62 +379,37 @@ function calcLocalConfidence(data) {
   return Math.max(0, Math.min(100, score));
 }
 
-// ─── V22: THE SKELETON KEY ROUTER (O ROTEADOR UNIVERSAL) ───
-async function fetchWithRetry(payload, timeoutMs = 25000) {
-  if(!userApiKey) throw new Error("API_MISSING");
+// ─── V23: DIRECT LINK AO MODELO LEVE (SEM ROUTER PARA NÃO BLOQUEAR) ───
+async function fetchWithRetry(payload, timeoutMs = 30000) {
+  const modelName = "gemini-1.5-flash-8b"; // O modelo mais rápido, fiável e menos restrito
   
-  // A lista mestra de modelos vision da Google. O sistema vai testar um por um.
-  const modelsToTry = [
-      "gemini-1.5-flash",
-      "gemini-1.5-flash-8b", // Ultra rápido, costuma estar sempre liberado
-      "gemini-1.5-flash-latest",
-      "gemini-1.5-pro-latest",
-      "gemini-1.0-pro-vision-latest" // O modelo de legado que nunca falha em contas antigas
-  ];
-  
-  let lastErrorMsg = "";
-  let successData = null;
-
-  for (let modelName of modelsToTry) {
-      document.getElementById('loadingText').textContent = `A NEGOCIAR COM O SERVIDOR (${modelName})...`;
+  try {
+      abortController = new AbortController();
+      const id = setTimeout(() => abortController.abort(), timeoutMs);
       
-      try {
-          abortController = new AbortController();
-          const id = setTimeout(() => abortController.abort(), timeoutMs);
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${userApiKey}`;
+      const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: abortController.signal });
+      clearTimeout(id);
+      
+      if (!response.ok) {
+          const errData = await response.json().catch(() => null);
+          const errMsg = errData?.error?.message || response.status.toString();
           
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${userApiKey}`;
-          const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: abortController.signal });
-          clearTimeout(id);
-          
-          if (!response.ok) {
-              const errData = await response.json().catch(() => null);
-              lastErrorMsg = errData?.error?.message || `Erro ${response.status}`;
-              console.warn(`[ROUTER] Modelo ${modelName} recusado: ${lastErrorMsg}`);
-              // Se foi recusado, o loop continua e tenta o próximo modelo da lista!
-              continue; 
-          }
-          
-          successData = await response.json();
-          console.log(`[ROUTER] Sucesso com o modelo: ${modelName}`);
-          break; // Sucesso! Quebra o loop.
-          
-      } catch (e) {
-          if (e.name === 'AbortError') {
-              lastErrorMsg = "Demorou demasiado a responder (Timeout).";
-          } else {
-              lastErrorMsg = e.message;
-          }
-          console.warn(`[ROUTER] Falha no modelo ${modelName}: ${lastErrorMsg}`);
-          continue; // Falhou a rede ou deu timeout? Tenta o próximo.
+          if (response.status === 400) throw new Error(`Google API (400): A sua chave foi mal formada. Verifique o Google AI Studio.`); 
+          if (response.status === 403) throw new Error(`Google API (403): O Google bloqueou esta chave. Apague-a e crie outra como 'Novo Projeto'.`);
+          if (response.status === 404) throw new Error(`Google API (404): O modelo ${modelName} foi bloqueado para a sua conta gratuita.`);
+          if (response.status === 429) throw new Error(`Google API (429): Limite de utilização excedido.`);
+          throw new Error(`Google API Erro: ${errMsg}`);
+      }
+      return await response.json();
+      
+  } catch (e) {
+      if (e.name === 'AbortError') {
+          throw new Error("A sua internet falhou ou a IA demorou demasiado a responder (Timeout). Tente enviar apenas 1 ou 2 fotos de cada vez.");
+      } else {
+          throw e;
       }
   }
-
-  // Se o loop terminou e não temos dados, é porque a chave foi recusada em TODOS os modelos.
-  if (!successData) {
-      throw new Error(`A Google bloqueou a ligação em todos os modelos. Verifique se a sua chave ainda é válida. Último erro: ${lastErrorMsg}`);
-  }
-
-  return successData;
 }
 
 function cleanJSON(text) { 
@@ -423,7 +417,7 @@ function cleanJSON(text) {
     const firstBrace = clean.indexOf('{');
     const lastBrace = clean.lastIndexOf('}');
     if(firstBrace !== -1 && lastBrace !== -1) { return clean.substring(firstBrace, lastBrace + 1); }
-    throw new Error("A IA não retornou a tabela de dados corretamente.");
+    throw new Error("A IA leu a imagem mas devolveu os dados num formato ilegível. Tente novamente.");
 }
 
 function handleFiles(files, type) {
@@ -493,6 +487,30 @@ Retorne APENAS um JSON válido estrito:
   "conclusao": { "melhor_estrutura": "Veredito" }
 }`;
 
+window.forceManualMode = function() {
+    resetSystem(); document.getElementById('uploadPanel').style.display = 'none';
+    validatedData = { spot_price: null, expiry: null, local_confidence: 0, options: [] };
+    validatedData = auditOCRData(validatedData); document.getElementById('ocrReview').classList.add('active');
+    document.getElementById('errorBox').innerHTML = `<strong>MODO MANUAL ATIVADO.</strong>`; document.getElementById('errorBox').className = `alert alert-warn active`;
+    renderOcrReview();
+}
+window.updateSpotExpiry = function() {
+    if(!validatedData) return; let s = document.getElementById('ma-spot').value; let e = document.getElementById('ma-expiry').value;
+    validatedData.spot_price = s ? Number(s) : null; validatedData.expiry = e || null; validatedData = auditOCRData(validatedData); renderOcrReview();
+}
+window.addManualRow = function() {
+    if(!validatedData) validatedData = { options: [] };
+    let strike = document.getElementById('ma-strike').value; let type = document.getElementById('ma-type').value;
+    let bid = document.getElementById('ma-bid').value; let ask = document.getElementById('ma-ask').value;
+    let theta = document.getElementById('ma-theta').value;
+
+    if(strike && bid && ask) {
+        validatedData.options.push({ id: Math.random().toString(36).substr(2, 9), strike: Number(strike), type: type, bid: Number(bid), ask: Number(ask), theta: theta ? Number(theta) : null, delta: null });
+        document.getElementById('ma-strike').value = ''; document.getElementById('ma-bid').value = ''; document.getElementById('ma-ask').value = ''; document.getElementById('ma-theta').value = ''; document.getElementById('ma-strike').focus(); 
+        validatedData = auditOCRData(validatedData); renderOcrReview();
+    } else { alert("Preencha Strike, Bid e Ask para adicionar a linha."); }
+}
+
 // ─── PIPELINE OCR NUVEM ───
 document.getElementById('btnOcr').addEventListener('click', async () => {
     resetSystem(); 
@@ -507,29 +525,30 @@ document.getElementById('btnOcr').addEventListener('click', async () => {
         let parts = [{ text: getExtractorPrompt(selectedAsset) }];
         
         for(let i=0; i<vChain.length; i++) { 
-            document.getElementById('loadingText').textContent = `A COMPRIMIR IMAGEM ${i+1}/${vChain.length}...`;
+            document.getElementById('loadingText').textContent = `A LER IMAGEM ${i+1}/${vChain.length}...`;
             let cleanBase64 = await preprocessImage(vChain[i]); 
             parts.push({ inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } }); 
         }
         
         if(vChart.length > 0) { 
             for(let i=0; i<vChart.length; i++) { 
-                document.getElementById('loadingText').textContent = `A COMPRIMIR GRÁFICO ${i+1}/${vChart.length}...`;
+                document.getElementById('loadingText').textContent = `A LER GRÁFICO ${i+1}/${vChart.length}...`;
                 let cleanBase64 = await preprocessImage(vChart[i]); 
                 parts.push({ inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } }); 
             } 
         }
 
+        document.getElementById('loadingText').textContent = `A CONECTAR COM A NUVEM DO GOOGLE...`;
         const payload = { contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } };
-        const result = await fetchWithRetry(payload, 25000); 
+        const result = await fetchWithRetry(payload, 30000); 
         
-        document.getElementById('loadingText').textContent = `A TRADUZIR DADOS...`;
+        document.getElementById('loadingText').textContent = `A DESCODIFICAR OS DADOS...`;
         const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
         
         validatedData = auditOCRData(JSON.parse(cleanJSON(textResponse))); 
         
         if (validatedData.options.length === 0) {
-            throw new Error("A IA não conseguiu ler a tabela corretamente.");
+            throw new Error("A IA leu as imagens mas não conseguiu encontrar os Strikes ou Bid/Ask. Verifique a resolução do print.");
         }
 
         document.getElementById('loadingBlock').classList.remove('active'); document.getElementById('ocrReview').classList.add('active'); renderOcrReview();
@@ -602,17 +621,17 @@ function renderOcrReview() {
 
 document.getElementById('btnAnalyze').addEventListener('click', async () => {
     document.getElementById('errorBox').classList.remove('active'); document.getElementById('ocrReview').style.display = 'none'; document.getElementById('loadingBlock').classList.add('active'); 
-    
+    document.getElementById('loadingText').textContent = 'A GERAR ESTRATÉGIA DE COMBATE...';
     const cleanData = { ...validatedData, options: validatedData.options.map(({id, suspicious, is_atm, mid, ...rest}) => rest) };
 
     try {
         const payload = { contents: [{ parts: [{ text: PROMPT_ANALYST.replace(/{ASSET}/g, selectedAsset).replace('{DATA}', JSON.stringify(cleanData)) }] }], generationConfig: { responseMimeType: "application/json" } };
-        const result = await fetchWithRetry(payload, 25000);
+        const result = await fetchWithRetry(payload, 30000);
         let analysisData = JSON.parse(cleanJSON(result.candidates[0].content.parts[0].text));
         analysisData = executeMathEngine(analysisData, validatedData);
         document.getElementById('loadingBlock').classList.remove('active'); renderFinalResult(analysisData);
     } catch (e) {
-        showError(e.message);
+        showError(`Falha no cálculo final: ${e.message}`);
         document.getElementById('ocrReview').style.display = 'block';
     }
 });
