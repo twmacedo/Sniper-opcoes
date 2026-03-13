@@ -1,811 +1,327 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SNIPER TERMINAL — Auto-Pilot v18.0</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SNIPER TERMINAL</title>
+
 <style>
-  :root {
-    --bg: #000000;
-    --surface: #0a0b0e;
-    --surface2: #14151a;
-    --border: #20222a;
-    --border2: #2f313d;
-    --accent: #00ff9d; 
-    --accent-dim: rgba(0,255,157,0.15);
-    --accent2: #00b8ff;
-    --danger: #ff2a4d;
-    --danger-dim: rgba(255,42,77,0.15);
-    --warn: #ffb800;
-    --warn-dim: rgba(255,184,0,0.15);
-    --text: #ffffff;
-    --text2: #94a3b8;
-    --text3: #56657f;
-  }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body{
+background:#000;
+color:#00ff9d;
+font-family:monospace;
+margin:0;
+padding:20px;
+}
 
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'Inter', sans-serif; 
-    min-height: 100vh; overflow-x: hidden;
-  }
-  .mono { font-family: 'Space Mono', monospace; }
+.container{
+max-width:700px;
+margin:auto;
+}
 
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(0,255,157,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,157,0.02) 1px, transparent 1px);
-    background-size: 30px 30px; pointer-events: none; z-index: 0;
-  }
+button{
+background:#00ff9d;
+color:#000;
+border:none;
+padding:15px;
+font-size:16px;
+margin-top:15px;
+cursor:pointer;
+}
 
-  .container { max-width: 600px; margin: 0 auto; padding: 0 16px 80px; position: relative; z-index: 1; }
+#status{
+margin-top:10px;
+color:#00b8ff;
+}
 
-  /* HEADER */
-  header { padding: 24px 0 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px; position: relative; display: flex; justify-content: space-between; align-items: flex-start;}
-  .logo-block { flex: 1; }
-  .logo { font-weight: 900; font-size: 24px; letter-spacing: 0.02em; color: var(--text); }
-  .logo span { color: var(--accent); }
-  .sub-logo { color: var(--text3); font-weight: 700; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 4px;}
-  
-  .settings-btn { background: var(--surface2); border: 1px solid var(--border2); color: var(--accent); font-size: 16px; width: 36px; height: 36px; border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s;}
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
 
-  .status-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; clear: both;}
-  .badge-outline { border: 1px solid var(--border2); padding: 4px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--text2); display: flex; align-items: center; gap: 6px; }
-  .badge-outline.active { border-color: rgba(0,255,157,0.4); color: var(--accent); background: var(--accent-dim); }
-  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+td,th{
+border:1px solid #00ff9d;
+padding:8px;
+text-align:center;
+}
 
-  /* MODAL SETTINGS */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px;}
-  .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease;}
-  .modal-box { background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);}
-  .modal-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 8px;}
-  .modal-desc { font-size: 11px; color: var(--text2); margin-bottom: 20px; line-height: 1.5;}
-  .modal-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--accent); padding: 12px; border-radius: 6px; font-family: 'Space Mono', monospace; font-size: 12px; outline: none; margin-bottom: 20px;}
-  .modal-actions { display: flex; gap: 12px; }
-  .btn-modal { flex: 1; padding: 12px; border-radius: 6px; font-weight: 700; font-size: 11px; text-transform: uppercase; cursor: pointer; border: none;}
-  .btn-save { background: var(--accent); color: #000; }
-  .btn-close { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+.strategy{
+background:#111;
+padding:20px;
+margin-top:25px;
+border:1px solid #00ff9d;
+}
 
-  /* UPLOAD MODULE */
-  .section-label { font-size: 10px; font-weight: 800; letter-spacing: 0.2em; color: var(--text3); margin-bottom: 16px; text-transform: uppercase; display: flex; align-items: center; gap: 12px;}
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  
-  .asset-selector { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px;}
-  .chip { padding: 10px 24px; border-radius: 6px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; white-space: nowrap;}
-  .chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
-
-  .upload-box { border: 1px solid var(--border2); border-radius: 8px; padding: 20px; margin-bottom: 16px; background: var(--surface); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-  .upload-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
-  .box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;}
-  .box-title { font-size: 13px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px;}
-  .box-tag { font-size: 8px; font-weight: 800; letter-spacing: 0.1em; color: var(--text3); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px;}
-  .box-desc { font-size: 11px; color: var(--text2); line-height: 1.4; margin-top: 4px;}
-
-  .preview-area { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; position: relative; z-index: 3;}
-  .thumb { position: relative; width: 60px; height: 60px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border2); }
-  .thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .btn-remove { position: absolute; top: 0; right: 0; background: rgba(255,42,77,0.9); border: none; color: #fff; width: 22px; height: 22px; font-size: 14px; font-weight: bold; border-bottom-left-radius: 6px;}
-
-  .btn-main { width: 100%; padding: 18px; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; letter-spacing: 0.1em; cursor: pointer; transition: 0.2s; text-transform: uppercase; margin-top: 12px; margin-bottom: 24px; }
-  .btn-green { background: var(--accent); color: #000; box-shadow: 0 4px 15px rgba(0,255,157,0.2); }
-  .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
-  .btn-main:disabled { background: var(--surface2); color: var(--text3); box-shadow: none; border: 1px solid var(--border); pointer-events: none;}
-
-  .loader { display: none; text-align: center; padding: 60px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px; }
-  .loader.active { display: block; }
-  .spinner { width: 40px; height: 40px; border: 3px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-text { font-size: 11px; font-weight: 800; letter-spacing: 0.2em; color: var(--accent); }
-
-  .alert { padding: 16px; border-radius: 8px; font-size: 12px; line-height: 1.5; margin-bottom: 20px; display: none; word-wrap: break-word;}
-  .alert.active { display: block; }
-  .alert-error { background: var(--danger-dim); border: 1px solid rgba(255,42,77,0.3); color: #ff6b81; }
-
-  /* OCR REVIEW */
-  #ocrReview { display: none; }
-  #ocrReview.active { display: block; animation: fadeIn 0.3s ease; }
-  
-  .ocr-seal-box { display: flex; justify-content: space-between; align-items: center; background: var(--surface2); border: 1px solid var(--border); padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;}
-  .seal-title { font-size: 8px; font-weight: 800; letter-spacing: 0.2em; color: var(--text3); text-transform: uppercase; margin-bottom: 6px;}
-  .seal-badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; display: inline-block;}
-  .seal-ok { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,255,157,0.3); }
-  .seal-warn { background: var(--warn-dim); color: var(--warn); border: 1px solid rgba(255,184,0,0.3); }
-  .seal-danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(255,42,77,0.3); }
-  
-  .decisional-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .ds-card { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 8px; }
-  .ds-card.spot-alert { border-color: var(--danger); background: var(--danger-dim); }
-  .ds-lbl { font-size: 9px; font-weight: 800; color: var(--text3); letter-spacing: 0.1em; margin-bottom: 6px; text-transform: uppercase;}
-  .ds-val { font-size: 15px; font-weight: 800; color: var(--text); }
-  
-  .table-wrapper { overflow-y: auto; overflow-x: auto; max-height: 35vh; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; position: relative;}
-  table { width: 100%; border-collapse: collapse; min-width: 480px; text-align: left; }
-  th { padding: 10px 14px; font-size: 9px; font-weight: 800; color: var(--text3); background: var(--surface2); border-bottom: 1px solid var(--border2); letter-spacing: 0.05em; position: sticky; top: 0; z-index: 10;}
-  td { padding: 12px 14px; font-size: 11px; color: var(--text2); border-bottom: 1px solid var(--border); vertical-align: middle;}
-  tr:last-child td { border-bottom: none; }
-  tr.atm-row { background: rgba(0,255,157,0.05); border-left: 2px solid var(--accent); }
-  .atm-badge { background: var(--accent); color: #000; font-size: 8px; font-weight: 800; padding: 2px 4px; border-radius: 2px; margin-left: 6px; letter-spacing: 0.1em;}
-  
-  .del-row-btn { background: transparent; border: 1px solid var(--border2); color: var(--danger); width: 28px; height: 28px; border-radius: 6px; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer;}
-  .tag { padding: 4px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.05em; }
-  .tag-c { background: var(--accent-dim); color: var(--accent); }
-  .tag-p { background: var(--danger-dim); color: var(--danger); }
-
-  /* FINAL RESULT */
-  #result { display: none; margin-bottom: 40px; }
-  #result.active { display: block; animation: fadeIn 0.4s ease; }
-
-  .hero-dash { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; position: relative; overflow: hidden;}
-  .sys-health-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--border2); }
-  .sys-health-fill { height: 100%; background: var(--accent); transition: 0.5s; }
-  
-  .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;}
-  .h-asset { font-size: 36px; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 6px; letter-spacing: -0.02em;}
-  .h-meta { font-size: 11px; font-weight: 600; color: var(--text3); }
-  .h-score-val { font-size: 48px; font-weight: 900; color: var(--accent); line-height: 1; text-align: right; letter-spacing: -0.02em;}
-  .h-score-lbl { font-size: 9px; font-weight: 800; color: var(--text3); letter-spacing: 0.1em; text-align: right; margin-top: 6px; text-transform: uppercase;}
-
-  .hero-data { display: flex; gap: 10px; border-top: 1px solid var(--border); padding-top: 16px; }
-  .h-data-item { flex: 1; border-left: 1px solid var(--border2); padding-left: 12px;}
-  .h-data-item:first-child { border-left: none; padding-left: 0; }
-  .h-d-lbl { font-size: 9px; font-weight: 800; color: var(--text3); letter-spacing: 0.1em; margin-bottom: 6px; text-transform: uppercase;}
-  .h-d-val { font-size: 12px; font-weight: 800; color: var(--text); }
-
-  .block-title { font-size: 11px; font-weight: 800; color: var(--text2); letter-spacing: 0.15em; margin-bottom: 14px; margin-top: 28px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;}
-  .block-title::before { content: ''; width: 6px; height: 6px; background: var(--border2); border-radius: 50%; }
-
-  .risk-box { border-left: 3px solid var(--danger); background: var(--danger-dim); padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 12px;}
-  .r-title { font-size: 11px; font-weight: 800; color: var(--danger); margin-bottom: 6px;}
-  .r-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
-
-  /* TABS SYSTEM */
-  .tabs-container { display: flex; gap: 8px; background: var(--surface); padding: 6px; border-radius: 8px; border: 1px solid var(--border); margin-top: 24px; margin-bottom: 16px;}
-  .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 6px; background: transparent; color: var(--text2); font-weight: 800; font-size: 11px; letter-spacing: 0.05em; cursor: pointer; transition: 0.2s;}
-  .tab-btn.active.tab-conv { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,255,157,0.3);}
-  .tab-btn.active.tab-inc { background: var(--warn-dim); color: var(--warn); border: 1px solid rgba(255,184,0,0.3);}
-  .tab-content { display: none; animation: fadeIn 0.3s ease; }
-  .tab-content.active { display: block; }
-
-  /* Tactical Cards */
-  .tac-grid { display: flex; flex-direction: column; gap: 16px; }
-  .tac-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: relative; overflow: hidden;}
-  .tac-card.t-dir { border-top: 4px solid var(--accent); }
-  .tac-card.t-spr { border-top: 4px solid var(--accent2); }
-  .tac-card.t-hdg { border-top: 4px solid var(--warn); }
-  .tac-card.t-err { border-top: 4px solid var(--danger); opacity: 0.6;}
-  
-  .t-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .t-type { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase;}
-  .t-name { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 4px; letter-spacing: -0.02em;}
-  .t-inst { font-size: 10px; font-weight: 700; color: var(--accent2); margin-bottom: 12px;}
-  .t-resumo { font-size: 12px; color: var(--text2); margin-bottom: 20px; font-style: italic; line-height: 1.4;}
-  
-  .leg-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 12px; }
-  .leg-row:last-of-type { border-bottom: none; margin-bottom: 20px;}
-  .l-act.buy { color: var(--accent); font-weight: 800; }
-  .l-act.sell { color: var(--danger); font-weight: 800; }
-  .l-asset { color: var(--text2); font-weight: 600; }
-  
-  .l-price-audited { color: var(--text); background: var(--surface2); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border2); position: relative;}
-  .limit-tag { position: absolute; top: -10px; right: 0; font-size: 7px; color: var(--accent2); font-weight: bold; background: var(--bg); padding: 2px 4px; border-radius: 2px;}
-
-  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: var(--surface2); padding: 16px; border-radius: 8px; border: 1px solid var(--border);}
-  .m-cell { display: flex; flex-direction: column; gap: 6px; }
-  .m-lbl { font-size: 9px; font-weight: 800; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; }
-  .m-val { font-size: 14px; font-weight: 800; color: var(--text); }
-  .m-credit { color: var(--warn); } .m-debit { color: var(--accent); } .m-danger { color: var(--danger); }
-  
-  .badge-roi { display: inline-block; background: var(--accent-dim); color: var(--accent); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(0,255,157,0.3); font-size: 12px;}
-  .badge-yield { display: inline-block; background: var(--warn-dim); color: var(--warn); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,184,0,0.3); font-size: 12px;}
-  .badge-greeks { display: inline-block; background: rgba(0,184,255,0.1); color: var(--accent2); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(0,184,255,0.3); font-size: 11px; margin-top: 4px;}
-
-  /* SNIPER OP */
-  .sniper-wrapper { padding: 2px; border-radius: 12px; margin-top: 16px; margin-bottom: 24px;}
-  .sn-conv { background: linear-gradient(180deg, rgba(0,255,157,0.6) 0%, rgba(0,255,157,0.05) 100%); box-shadow: 0 10px 40px rgba(0,255,157,0.15); }
-  .sn-inc { background: linear-gradient(180deg, rgba(255,184,0,0.6) 0%, rgba(255,184,0,0.05) 100%); box-shadow: 0 10px 40px rgba(255,184,0,0.15); }
-  
-  .sniper-op { background: var(--surface); border-radius: 10px; padding: 24px; position: relative; }
-  .sn-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 900; padding: 6px 12px; border-radius: 6px; letter-spacing: 0.1em; margin-bottom: 12px;}
-  .badge-conv { background: var(--accent-dim); color: var(--accent); }
-  .badge-inc { background: var(--warn-dim); color: var(--warn); }
-  
-  .sn-title { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 4px; line-height: 1.2; letter-spacing: -0.02em;}
-  .sn-inst { font-size: 11px; font-weight: 700; color: var(--accent2); margin-bottom: 20px;}
-  
-  .sn-bullets { margin-bottom: 24px; padding-left: 0; list-style: none;}
-  .sn-bullets li { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; display: flex; gap: 10px; font-weight: 500;}
-  .bullet-conv li::before { content: '⚡'; color: var(--accent); font-weight: 900;}
-  .bullet-inc li::before { content: '💰'; color: var(--warn); font-weight: 900;}
-
-  .sn-legs { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px; }
-
-  .verdict-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; text-align: center; margin-top: 32px;}
-  .v-title { font-size: 11px; font-weight: 900; color: var(--accent); letter-spacing: 0.2em; margin-bottom: 12px; text-transform: uppercase;}
-  .v-text { font-size: 15px; color: var(--text); line-height: 1.6; font-weight: 600;}
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
-</head>
-<body>
 
-<!-- API KEY MODAL -->
-<div class="modal-overlay" id="apiModal">
-  <div class="modal-box">
-    <div class="modal-title">⚙️ Configuração da Nuvem</div>
-    <div class="modal-desc">Salve a sua API Key do Google Gemini. Fica guardada apenas na memória do seu telemóvel.</div>
-    <input type="password" id="apiInput" class="modal-input" placeholder="Cole a API Key aqui...">
-    <div class="modal-actions">
-      <button class="btn-modal btn-close" onclick="closeApiModal()">Cancelar</button>
-      <button class="btn-modal btn-save" onclick="saveApiKey()">Salvar Chave</button>
-    </div>
-  </div>
-</div>
+</head>
+
+<body>
 
 <div class="container">
 
-  <header>
-    <div class="logo-block">
-      <div class="logo">SNIPER<span>.</span>TERM</div>
-      <div class="sub-logo">Pro Desk v18 Auto-Pilot</div>
-    </div>
-    <div class="settings-btn" onclick="openApiModal()">⚙️</div>
-  </header>
+<h1>SNIPER TERMINAL</h1>
 
-  <div class="status-bar">
-    <div class="badge-outline active"><div class="dot"></div> SMART EXECUTION ON</div>
-    <div class="badge-outline mono" id="clock">--:--</div>
-  </div>
+<p>Options Chain Analyzer</p>
 
-  <div class="alert alert-error" id="errorBox"></div>
+<input type="file" id="imageInput" accept="image/*">
 
-  <div id="uploadPanel">
-    <div class="section-label" style="margin-top:24px;">01 // DATA INGESTION</div>
-    <div class="asset-selector" id="assetGroup">
-      <div class="chip active" data-asset="ETH">ETH</div>
-      <div class="chip" data-asset="BTC">BTC</div>
-      <div class="chip" data-asset="SOL">SOL</div>
-    </div>
-    <div class="upload-box" id="dropZoneChain">
-      <input type="file" id="fileChain" accept="image/*" multiple>
-      <div class="box-header"><div class="box-title">⛓️ Option Chain / Greeks</div><div class="box-tag">REQUIRED</div></div>
-      <div class="box-desc">Strikes, Bid/Ask, Theta, Gamma, Delta</div>
-      <div class="preview-area" id="previewChain"></div>
-    </div>
-    <div class="upload-box" id="dropZoneChart">
-      <input type="file" id="fileChart" accept="image/*" multiple>
-      <div class="box-header"><div class="box-title">📊 Macro / Vol</div><div class="box-tag">OPTIONAL</div></div>
-      <div class="box-desc">Gráfico Spot ou BVIV</div>
-      <div class="preview-area" id="previewChart"></div>
-    </div>
-    <button class="btn-main btn-green" id="btnOcr" disabled>Extrair Dados (OCR)</button>
-  </div>
+<button id="analyzeBtn">
+ANALISAR PRINT
+</button>
 
-  <div class="loader" id="loadingBlock">
-    <div class="spinner"></div>
-    <div class="loader-text" id="loadingText">COMPRIMINDO E ANALISANDO...</div>
-  </div>
+<div id="status"></div>
 
-  <!-- OCR REVIEW -->
-  <div id="ocrReview">
-    <div class="section-label" style="color:var(--warn)">02 // DATA VALIDATION (SMART ROUTING)</div>
-    <div class="ocr-seal-box">
-      <div><div class="seal-title">Status da Tabela</div><div class="seal-badge" id="ocrSealBadge">--</div></div>
-      <div style="text-align: right;"><div class="seal-title">Confidence</div><div class="seal-badge mono" style="background:transparent; border:1px solid var(--border); color:var(--text);" id="ocrConfBadge">--</div></div>
-    </div>
-    <div class="decisional-summary" id="ocrSummary"></div>
-    <div class="table-wrapper">
-        <table>
-            <thead><tr><th>STRIKE</th><th>TYPE</th><th>BID</th><th>ASK</th><th>MID (LIMIT)</th><th>THETA</th></tr></thead>
-            <tbody id="ocrTableBody" class="mono"></tbody>
-        </table>
-    </div>
-    <button class="btn-main btn-yellow" id="btnAnalyze" disabled>✓ Validar Mid-Prices & Gerar Tática</button>
-    <button class="btn-main btn-outline" id="btnCancel">✖ Descartar Tudo</button>
-  </div>
+<div id="chainTable"></div>
 
-  <div id="result"></div>
+<div id="strategyBox"></div>
 
 </div>
 
 <script>
-// ─── CLOUD SAFE API MANAGEMENT ───
-let userApiKey = localStorage.getItem('gemini_api_key') || "";
-if(userApiKey) {
-    document.querySelector('.status-bar .badge-outline').innerHTML = '<div class="dot"></div> API KEY LOADED';
-} else {
-    document.querySelector('.status-bar .badge-outline').innerHTML = '<div class="dot" style="background:var(--warn)"></div> NO API KEY';
-    document.querySelector('.status-bar .badge-outline').style.color = "var(--warn)";
-    document.querySelector('.status-bar .badge-outline').style.borderColor = "var(--warn)";
+
+const btn = document.getElementById("analyzeBtn")
+
+btn.onclick = async ()=>{
+
+const input = document.getElementById("imageInput")
+
+if(!input.files.length){
+
+alert("Envie a print da option chain")
+
+return
+
 }
 
-function openApiModal() { document.getElementById('apiInput').value = userApiKey; document.getElementById('apiModal').classList.add('active'); }
-function closeApiModal() { document.getElementById('apiModal').classList.remove('active'); }
-function saveApiKey() {
-    const key = document.getElementById('apiInput').value.trim();
-    if(key) { 
-        localStorage.setItem('gemini_api_key', key); 
-        userApiKey = key; 
-        closeApiModal(); 
-        document.querySelector('.status-bar .badge-outline').innerHTML = '<div class="dot"></div> API KEY LOADED';
-        document.querySelector('.status-bar .badge-outline').style.color = "var(--accent)";
-        document.querySelector('.status-bar .badge-outline').style.borderColor = "rgba(0,255,157,0.4)";
-        alert("Chave salva localmente!"); 
-    } 
+document.getElementById("status").innerText="Processando imagem..."
+
+const file = input.files[0]
+
+const base64 = await fileToBase64(file)
+
+document.getElementById("status").innerText="Lendo dados da imagem..."
+
+const chain = await extractChain(base64)
+
+renderChain(chain)
+
+const strat = findBestSpread(chain)
+
+renderStrategy(strat)
+
 }
 
-// V18 FIX: Mudar o URL para o modelo público estável e universal (gemini-1.5-flash)
-function getGeminiUrl() { 
-    return `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userApiKey}`; 
+function fileToBase64(file){
+
+return new Promise((resolve)=>{
+
+const reader = new FileReader()
+
+reader.onload = ()=>resolve(reader.result)
+
+reader.readAsDataURL(file)
+
+})
+
 }
 
-let chainFiles = []; let chartFiles = []; let selectedAsset = 'ETH'; let validatedData = null; let abortController = null;
+async function extractChain(image){
 
-function updateClock() { const d = new Date(); document.getElementById('clock').textContent = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
-setInterval(updateClock, 1000); updateClock();
+const base64 = image.split(",")[1]
 
-// V18 FIX: Super Compressor de Imagem
-async function preprocessImage(file) {
-  return new Promise((resolve, reject) => {
-    const img = new Image(); const reader = new FileReader();
-    reader.onload = (e) => {
-      img.onload = () => {
-        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-        const cropTop = img.height * 0.08; const cropBottom = img.height * 0.10;
-        const drawHeight = img.height - cropTop - cropBottom;
-        
-        // COMPRESSÃO PESADA: Reduz a largura máxima para 800px para não engasgar a API
-        const MAX_WIDTH = 800;
-        let scale = 1;
-        if (img.width > MAX_WIDTH) { scale = MAX_WIDTH / img.width; }
+const response = await fetch("https://api.anthropic.com/v1/messages",{
 
-        canvas.width = img.width * scale; 
-        canvas.height = drawHeight * scale;
-        
-        ctx.scale(scale, scale);
-        ctx.filter = 'grayscale(100%) contrast(1.5) brightness(1.1)';
-        ctx.drawImage(img, 0, cropTop, img.width, drawHeight, 0, 0, img.width, drawHeight);
-        
-        // Qualidade de JPEG a 80% corta o peso da base64 drasticamente
-        resolve(canvas.toDataURL('image/jpeg', 0.8).split(',')[1]);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
+method:"POST",
 
-function parseNum(v) {
-  if (v === null || v === undefined || v === '') return null;
-  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
-  let s = String(v).trim().replace(/[Oo]/g, '0').replace(/[^\d.,-]/g, '');
-  if (!s) return null;
-  if (/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
-  else if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g, '').replace(',', '.');
-  else s = s.replace(',', '.');
-  const n = Number(s);
-  return Number.isFinite(n) ? n : null;
-}
+headers:{
+"Content-Type":"application/json",
+"x-api-key":"SUA_API_KEY",
+"anthropic-version":"2023-06-01"
+},
 
-function isReasonableStrike(asset, strike) {
-  if (!Number.isFinite(strike)) return false;
-  if (asset === 'ETH') return strike >= 500 && strike <= 15000;
-  if (asset === 'BTC') return strike >= 10000 && strike <= 200000;
-  if (asset === 'SOL') return strike >= 5 && strike <= 2000;
-  return true;
-}
+body:JSON.stringify({
 
-function calcLocalConfidence(data) {
-  let score = 0;
-  if (Number.isFinite(data.spot_price)) score += 20;
-  if (data.expiry) score += 10;
-  if (Array.isArray(data.options)) { if (data.options.length >= 4) score += 15; if (data.options.length >= 8) score += 10; }
-  return Math.max(0, Math.min(100, score));
-}
+model:"claude-sonnet-4-20250514",
 
-// V18 FIX: Mostra o erro exato que a API devolver (Chega de mensagens genéricas)
-async function fetchWithRetry(payload, retries = 3, timeoutMs = 45000) {
-  if(!userApiKey) throw new Error("API_KEY_MISSING");
-  const delays = [1000, 3000, 6000];
-  for (let i = 0; i < retries; i++) {
-    try {
-      abortController = new AbortController();
-      const id = setTimeout(() => abortController.abort(), timeoutMs);
-      const response = await fetch(getGeminiUrl(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: abortController.signal });
-      clearTimeout(id);
-      
-      if (!response.ok) {
-        let errMessage = `HTTP ${response.status}`;
-        try {
-            const errData = await response.json();
-            if(errData.error && errData.error.message) errMessage = errData.error.message;
-        } catch(e) {}
-        throw new Error(`Google API: ${errMessage}`);
-      }
-      return await response.json();
-    } catch (e) {
-      if (e.message === "API_KEY_MISSING") throw e;
-      if (e.name === 'AbortError') throw new Error("A sua internet falhou ou a Google demorou demasiado a responder (Timeout). Tente novamente com menos imagens.");
-      if (i === retries - 1) throw e;
-      await new Promise(res => setTimeout(res, delays[i]));
-    }
-  }
-}
+max_tokens:1200,
 
-function cleanJSON(text) { 
-    let clean = text.replace(/```json/gi, '').replace(/```/g, '').trim(); 
-    // Em raras vezes o modelo responde com a tag inicial noutra linha, vamos garantir a extração
-    const firstBrace = clean.indexOf('{');
-    const lastBrace = clean.lastIndexOf('}');
-    if(firstBrace !== -1 && lastBrace !== -1) {
-        return clean.substring(firstBrace, lastBrace + 1);
-    }
-    return clean;
-}
+messages:[{
 
-function handleFiles(files, type) {
-  Array.from(files).forEach(file => {
-    if (!file.type.startsWith('image/')) return;
-    if (type === 'chain') { chainFiles.push(file); renderPreview(file, chainFiles.length - 1, 'chain'); }
-    else { chartFiles.push(file); renderPreview(file, chartFiles.length - 1, 'chart'); }
-  });
-  checkOcrBtn();
-}
-function renderPreview(file, idx, type) {
-  const strip = document.getElementById(type === 'chain' ? 'previewChain' : 'previewChart');
-  const thumb = document.createElement('div'); thumb.className = 'thumb'; thumb.dataset.idx = idx; thumb.dataset.type = type;
-  thumb.innerHTML = `<img src="${URL.createObjectURL(file)}"><button class="btn-remove" onclick="removeFile(${idx}, '${type}')">×</button>`;
-  strip.appendChild(thumb);
-}
-function removeFile(idx, type) {
-  if(type === 'chain') chainFiles[idx] = null; else chartFiles[idx] = null;
-  document.querySelector(`.thumb[data-idx="${idx}"][data-type="${type}"]`)?.remove(); checkOcrBtn();
-}
-function checkOcrBtn() { document.getElementById('btnOcr').disabled = chainFiles.filter(Boolean).length === 0; }
+role:"user",
 
-document.getElementById('fileChain').addEventListener('change', e => handleFiles(e.target.files, 'chain'));
-document.getElementById('fileChart').addEventListener('change', e => handleFiles(e.target.files, 'chart'));
-document.getElementById('assetGroup').addEventListener('click', e => {
-  if (!e.target.classList.contains('chip')) return;
-  document.querySelectorAll('#assetGroup .chip').forEach(c => c.classList.remove('active')); e.target.classList.add('active'); selectedAsset = e.target.dataset.asset;
-});
+content:[
 
-function showError(msg) {
-    const err = document.getElementById('errorBox'); 
-    err.innerHTML = `<strong>ERRO:</strong> ${msg}`; 
-    err.classList.add('active'); 
-    document.getElementById('loadingBlock').classList.remove('active'); 
-    checkOcrBtn();
-}
-function resetSystem() {
-    document.getElementById('ocrReview').classList.remove('active'); document.getElementById('result').classList.remove('active'); document.getElementById('result').innerHTML = ''; document.getElementById('errorBox').classList.remove('active'); document.getElementById('uploadPanel').style.display = 'block'; validatedData = null; if(abortController) abortController.abort();
-}
-document.getElementById('btnCancel').addEventListener('click', resetSystem);
-
-const getExtractorPrompt = (asset) => `Você é um extrator OCR quantitativo. Ativo alvo: ${asset}.
-Extraia APENAS valores visíveis nas imagens. Use null quando não estiver legível.
-Retorne APENAS JSON válido, sem qualquer texto adicional:
 {
-  "spot_price": null, "expiry": null, "bviv": null, "confidence": null,
-  "options": [ { "strike": null, "type": "CALL", "bid": null, "ask": null, "delta": null, "theta": null, "gamma": null } ]
-}`;
+type:"image",
+source:{
+type:"base64",
+media_type:"image/jpeg",
+data:base64
+}
+},
 
-const PROMPT_ANALYST = `MESA SNIPER. DADOS: {DATA}. Ativo: {ASSET}.
-NÃO calcule custos ou lucros. O Motor JS fará isso usando execução por "Limit Order" (Preço MID). Sugira apenas as LEGS.
-Retorne APENAS um JSON válido estrito:
 {
-  "desk_bias": "BULLISH", "convexity_status": "ACTIVE", "sniper_score": 88,
-  "raio_x": { "tendencia": "txt", "volatilidade": "txt", "institucional": "txt" },
-  "riscos": [ { "titulo": "Risco", "descricao": "desc" } ],
-  "best_play_convexity": { "nome": "Bull Call Spread", "bullets": ["Motivo 1"], "legs": [ { "acao": "COMPRA", "strike": 70000, "tipo": "CALL" }, { "acao": "VENDA", "strike": 73000, "tipo": "CALL" } ], "cenario": "Romper X" },
-  "best_play_income": { "nome": "Bull Put Spread", "bullets": ["Motivo 1"], "legs": [ { "acao": "VENDA", "strike": 68000, "tipo": "PUT" }, { "acao": "COMPRA", "strike": 66000, "tipo": "PUT" } ], "cenario": "Manter suporte" },
-  "cardapio_convexity": [ { "nome": "Long Call", "resumo": "Alvo curto.", "legs": [ { "acao": "COMPRA", "strike": 71000, "tipo": "CALL" } ] } ],
-  "cardapio_income": [ { "nome": "Covered Call", "resumo": "Yield.", "legs": [ { "acao": "VENDA", "strike": 73000, "tipo": "CALL" } ] } ],
-  "conclusao": { "melhor_estrutura": "Veredito" }
-}`;
+type:"text",
+text:`
+Leia a tabela de opções da imagem.
 
-// ─── PIPELINE OCR NUVEM ───
-document.getElementById('btnOcr').addEventListener('click', async () => {
-    resetSystem(); 
-    
-    if(!userApiKey) {
-        showError("A Chave da API (Gemini) não está configurada. Clique na ⚙️ lá em cima para configurar.");
-        return;
-    }
+Extraia:
 
-    const vChain = chainFiles.filter(Boolean); const vChart = chartFiles.filter(Boolean);
-    if (!vChain.length) return;
+strike
+bid
+ask
+delta
+gamma
+volume
 
-    document.getElementById('uploadPanel').style.display = 'none'; document.getElementById('loadingBlock').classList.add('active');
-    
-    try {
-        let parts = [{ text: getExtractorPrompt(selectedAsset) }];
-        for(let f of vChain) { let cleanBase64 = await preprocessImage(f); parts.push({ inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } }); }
-        if(vChart.length > 0) { for(let f of vChart) { let cleanBase64 = await preprocessImage(f); parts.push({ inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } }); } }
+retorne JSON:
 
-        const payload = { contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } };
-        const result = await fetchWithRetry(payload, 3, 40000);
-        const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
-        
-        validatedData = auditOCRData(JSON.parse(cleanJSON(textResponse))); 
-        document.getElementById('loadingBlock').classList.remove('active'); document.getElementById('ocrReview').classList.add('active'); renderOcrReview();
-
-    } catch (e) {
-        showError(e.message); 
-        document.getElementById('uploadPanel').style.display = 'block'; 
-    }
-});
-
-function auditOCRData(data) {
-  if (!data) return;
-  data.spot_price = parseNum(data.spot_price);
-  data.spot_suspicious = false;
-  
-  let rawOptions = (data.options || []).map(o => ({
-    ...o, strike: parseNum(o.strike), type: String(o.type || '').toUpperCase().includes('CALL') ? 'CALL' : 'PUT',
-    bid: parseNum(o.bid), ask: parseNum(o.ask), delta: parseNum(o.delta), theta: parseNum(o.theta), gamma: parseNum(o.gamma)
-  })).filter(o => Number.isFinite(o.strike) && Number.isFinite(o.bid) && Number.isFinite(o.ask));
-
-  const dedupMap = {};
-  rawOptions.forEach(opt => {
-    opt.mid = Number(((opt.bid + opt.ask) / 2).toFixed(2)); 
-    const key = `${opt.strike}_${opt.type}`;
-    if (!dedupMap[key]) { dedupMap[key] = opt; return; }
-    const curr = dedupMap[key];
-    if ((opt.ask - opt.bid) >= 0 && (curr.ask - curr.bid < 0 || (opt.ask - opt.bid) < (curr.ask - curr.bid))) dedupMap[key] = opt;
-  });
-
-  data.options = Object.values(dedupMap).sort((a, b) => a.strike - b.strike).map(o => ({ ...o, id: o.id || Math.random().toString(36).slice(2, 11), suspicious: false, is_atm: false }));
-  data.local_confidence = calcLocalConfidence(data);
-
-  let atmStrike = "N/A";
-  if (Number.isFinite(data.spot_price) && data.options.length > 0) {
-    let strikes = data.options.map(o => o.strike);
-    if (data.spot_price < Math.min(...strikes) * 0.85 || data.spot_price > Math.max(...strikes) * 1.15) data.spot_suspicious = true;
-    else {
-      let minDiff = Infinity;
-      data.options.forEach(o => { let diff = Math.abs(o.strike - data.spot_price); if (diff < minDiff) { minDiff = diff; atmStrike = o.strike; } });
-      data.options.forEach(o => { if (o.strike === atmStrike) o.is_atm = true; });
-    }
-  }
-
-  if (data.spot_suspicious) { data.ocr_seal = "SPOT INCONSISTENTE"; data.ocr_seal_class = "seal-danger"; } 
-  else if (data.options.length === 0) { data.ocr_seal = "TABELA VAZIA"; data.ocr_seal_class = "seal-warn"; } 
-  else { data.ocr_seal = "SMART EXECUTION READY"; data.ocr_seal_class = "seal-ok"; }
-  data.atm_strike = atmStrike;
-  
-  return data;
+{
+spot:number,
+options:[
+{
+strike:number,
+bid:number,
+ask:number,
+delta:number,
+gamma:number,
+volume:number
+}
+]
+}
+`
 }
 
-function renderOcrReview() {
-    const d = validatedData; if(!d) return;
-    document.getElementById('ocrSealBadge').textContent = d.ocr_seal; document.getElementById('ocrSealBadge').className = `seal-badge ${d.ocr_seal_class}`;
-    document.getElementById('ocrSummary').innerHTML = `
-        <div class="ds-card ${d.spot_suspicious ? 'spot-alert' : ''}"><div class="ds-lbl">SPOT LIDO</div><div class="ds-val mono ${d.spot_suspicious ? 'm-danger' : ''}">$${d.spot_price || '--'}</div></div>
-        <div class="ds-card"><div class="ds-lbl">FAIXA ATM</div><div class="ds-val mono" style="color:var(--accent2)">${d.atm_strike !== 'N/A' ? '$'+d.atm_strike : '--'}</div></div>
-    `;
+]
 
-    document.getElementById('ocrTableBody').innerHTML = d.options.map(o => `
-        <tr class="${o.suspicious ? 'suspect' : ''} ${o.is_atm ? 'atm-row' : ''}">
-            <td style="color:var(--text);font-weight:700">$${o.strike} ${o.is_atm ? '<span class="atm-badge">ATM</span>' : ''}</td>
-            <td><span class="tag ${o.type==='CALL'?'tag-c':'tag-p'}">${o.type.substring(0,1)}</span></td>
-            <td>${o.bid}</td><td>${o.ask}</td><td style="color:var(--accent); font-weight:bold;">${o.mid}</td><td style="color:var(--accent2)">${o.theta ?? '-'}</td>
-            <td style="text-align:center;"><button class="del-row-btn" onclick="deleteRow('${o.id}')">×</button></td>
-        </tr>
-    `).join('');
-    document.getElementById('btnAnalyze').disabled = d.options.length === 0;
+}]
+
+})
+
+})
+
+const data = await response.json()
+
+const text = data.content[0].text
+
+return JSON.parse(text)
+
 }
 
-document.getElementById('btnAnalyze').addEventListener('click', async () => {
-    document.getElementById('errorBox').classList.remove('active'); document.getElementById('ocrReview').style.display = 'none'; document.getElementById('loadingBlock').classList.add('active'); document.getElementById('loadingText').textContent = 'CALCULANDO LIMIT ORDERS...';
-    const cleanData = { ...validatedData, options: validatedData.options.map(({id, suspicious, is_atm, mid, ...rest}) => rest) };
+function renderChain(data){
 
-    try {
-        const payload = { contents: [{ parts: [{ text: PROMPT_ANALYST.replace(/{ASSET}/g, selectedAsset).replace('{DATA}', JSON.stringify(cleanData)) }] }], generationConfig: { responseMimeType: "application/json" } };
-        const result = await fetchWithRetry(payload, 3, 50000);
-        let analysisData = JSON.parse(cleanJSON(result.candidates[0].content.parts[0].text));
-        analysisData = executeMathEngine(analysisData, validatedData);
-        document.getElementById('loadingBlock').classList.remove('active'); renderFinalResult(analysisData);
-    } catch (e) {
-        showError(e.message);
-        document.getElementById('ocrReview').style.display = 'block';
-    }
-});
+let html="<table>"
 
-function executeMathEngine(aiData, ocrData) {
-    const d = { ...aiData };
-    d.asset = selectedAsset; d.spot_price = ocrData.spot_price || 'N/A'; d.expiry = ocrData.expiry || 'N/A';
-    d.spot_suspicious = ocrData.spot_suspicious;
+html+="<tr><th>Strike</th><th>Bid</th><th>Ask</th></tr>"
 
-    let confScore = 100;
-    if (d.spot_suspicious) confScore -= 50; if (ocrData.options.length < 5) confScore -= 30;
-    const localConfidence = Number.isFinite(ocrData.local_confidence) ? ocrData.local_confidence : 70;
-    confScore = Math.floor((confScore + localConfidence) / 2);
-    d.sys_health = confScore; d.final_score = Math.max(0, Math.floor(((parseInt(d.sniper_score) || 80) + confScore) / 2));
+data.options.forEach(o=>{
 
-    const calcStructure = (strategy) => {
-        if(!strategy || !Array.isArray(strategy.legs)) return strategy;
-        let netCost = 0; let netTheta = 0; let isValid = true; let buyStrikes = []; let sellStrikes = []; let isCall = true;
+html+=`
 
-        strategy.legs.forEach(leg => {
-            const opt = ocrData.options.find(o => o.strike === leg.strike && o.type === leg.tipo);
-            if(opt) {
-                let px = opt.mid; 
-                leg.preco_real = px;
-                
-                if(leg.acao === 'COMPRA') { netCost += px; buyStrikes.push(leg.strike); netTheta += (opt.theta || 0); }
-                else { netCost -= px; sellStrikes.push(leg.strike); netTheta -= (opt.theta || 0); } 
-                
-                if(leg.tipo === 'PUT') isCall = false;
-            } else { leg.preco_real = null; isValid = false; }
-        });
+<tr>
+<td>${o.strike}</td>
+<td>${o.bid}</td>
+<td>${o.ask}</td>
+</tr>
 
-        strategy.is_valid = isValid;
-        if(isValid) {
-            let isDebit = netCost >= 0; let flowVal = Math.abs(netCost);
-            strategy.flow_type = isDebit ? "DEBIT" : "CREDIT"; strategy.flow_label = isDebit ? "Custo (Limit)" : "Crédito (Limit)"; strategy.flow_val = flowVal.toFixed(2);
-            strategy.roi_pct = "N/A"; strategy.rr_ratio = "N/A";
-            strategy.net_theta = netTheta !== 0 ? (netTheta > 0 ? `+${netTheta.toFixed(2)}/dia` : `${netTheta.toFixed(2)}/dia`) : null;
+`
 
-            if(buyStrikes.length === 1 && sellStrikes.length === 1) { 
-                let spreadWidth = Math.abs(sellStrikes[0] - buyStrikes[0]);
-                if (isDebit) {
-                    strategy.inst_name = isCall ? "BULL CALL SPREAD" : "BEAR PUT SPREAD";
-                    strategy.max_profit = (spreadWidth - flowVal).toFixed(2); strategy.max_loss = flowVal.toFixed(2);
-                    strategy.be_calc = isCall ? (buyStrikes[0] + flowVal).toFixed(2) : (buyStrikes[0] - flowVal).toFixed(2);
-                } else {
-                    strategy.inst_name = isCall ? "BEAR CALL SPREAD" : "BULL PUT SPREAD";
-                    strategy.max_profit = flowVal.toFixed(2); strategy.max_loss = (spreadWidth - flowVal).toFixed(2);
-                    strategy.be_calc = isCall ? (sellStrikes[0] + flowVal).toFixed(2) : (sellStrikes[0] - flowVal).toFixed(2);
-                }
-            } else if (buyStrikes.length === 1 && sellStrikes.length === 0) { 
-                strategy.inst_name = isCall ? "LONG CALL" : "LONG PUT";
-                strategy.max_profit = "ILIMITADO"; strategy.max_loss = flowVal.toFixed(2);
-                strategy.be_calc = isCall ? (buyStrikes[0] + flowVal).toFixed(2) : (buyStrikes[0] - flowVal).toFixed(2);
-            } else if (buyStrikes.length === 0 && sellStrikes.length === 1) {
-                strategy.inst_name = isCall ? "COVERED CALL" : "CASH-SECURED PUT";
-                let spot = Number.isFinite(ocrData.spot_price) ? ocrData.spot_price : null;
-                if (spot) {
-                    strategy.max_profit = isCall ? ((sellStrikes[0] - spot) + flowVal).toFixed(2) : flowVal.toFixed(2);
-                    strategy.max_loss = isCall ? "SPOT" : (sellStrikes[0] - flowVal).toFixed(2);
-                    strategy.be_calc = isCall ? (spot - flowVal).toFixed(2) : (sellStrikes[0] - flowVal).toFixed(2);
-                    strategy.roi_pct = ((flowVal / spot) * 100).toFixed(2) + "%";
-                } else {
-                    strategy.max_profit = flowVal.toFixed(2); strategy.max_loss = "∞"; strategy.be_calc = "--";
-                }
-            } else { strategy.inst_name = "COMPLEXA"; strategy.max_profit = "VAR"; strategy.max_loss = "VAR"; strategy.be_calc = "VAR"; }
+})
 
-            if (strategy.roi_pct === "N/A" && strategy.max_loss > 0 && strategy.max_profit !== "ILIMITADO" && strategy.max_profit !== "VAR") {
-                strategy.rr_ratio = `1 : ${(strategy.max_profit / strategy.max_loss).toFixed(2)}`;
-                strategy.roi_pct = `+${((strategy.max_profit / strategy.max_loss) * 100).toFixed(1)}%`;
-            } else if (strategy.max_profit === "ILIMITADO") { strategy.rr_ratio = `1 : ∞`; strategy.roi_pct = "∞"; }
-        }
-        return strategy;
-    };
+html+="</table>"
 
-    if(Array.isArray(d.cardapio_convexity)) d.cardapio_convexity = d.cardapio_convexity.map(calcStructure);
-    if(Array.isArray(d.cardapio_income)) d.cardapio_income = d.cardapio_income.map(calcStructure);
-    if(d.best_play_convexity) d.best_play_convexity = calcStructure(d.best_play_convexity);
-    if(d.best_play_income) d.best_play_income = calcStructure(d.best_play_income);
-    return d;
+document.getElementById("chainTable").innerHTML=html
+
 }
 
-window.switchTab = function(tabName) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'tab-conv', 'tab-inc'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    if(tabName === 'convexity') {
-        document.getElementById('btnTabConv').classList.add('active', 'tab-conv'); document.getElementById('tabConvexity').classList.add('active');
-    } else {
-        document.getElementById('btnTabInc').classList.add('active', 'tab-inc'); document.getElementById('tabIncome').classList.add('active');
-    }
-};
+function findBestSpread(data){
 
-function renderFinalResult(d) {
-  let isHalted = d.spot_suspicious || d.options?.length === 0;
-  
-  let html = `
-    <div class="hero-dash">
-      <div class="sys-health-bar"><div class="sys-health-fill" style="width: ${d.sys_health}%; background: ${d.sys_health > 70 ? 'var(--accent)' : (d.sys_health > 40 ? 'var(--warn)' : 'var(--danger)')}"></div></div>
-      <div class="hero-header">
-        <div><div class="h-asset">${d.asset}</div><div class="h-meta mono ${d.spot_suspicious ? 'm-danger' : ''}">SPOT $${d.spot_price} &nbsp;·&nbsp; VENC ${d.expiry}</div></div>
-        <div><div class="h-score-val mono">${d.sniper_score||'--'}</div><div class="h-score-lbl">SYS SCORE</div></div>
-      </div>
-    </div>`;
+let best=null
 
-  if (isHalted) {
-      html += `<div class="kill-switch"><div class="ks-icon">🛑</div><div class="ks-title">SYSTEM HALT</div><div class="ks-desc">Spot inconsistente ou Book vazio.</div></div>`;
-  } else {
-      html += `<div class="tabs-container"><button id="btnTabConv" class="tab-btn active tab-conv" onclick="switchTab('convexity')">⚡ CONVEXITY</button><button id="btnTabInc" class="tab-btn" onclick="switchTab('income')">💰 INCOME (YIELD)</button></div>`;
+data.options.forEach(buy=>{
 
-      // --- TAB CONVEXITY ---
-      html += `<div id="tabConvexity" class="tab-content active">`;
-      if (d.best_play_convexity && d.best_play_convexity.legs.length > 0) {
-          const s = d.best_play_convexity;
-          html += `
-            <div class="sniper-wrapper sn-conv">
-              <div class="sniper-op">
-                <div class="sn-badge badge-conv">BEST PLAY (DIRECTIONAL)</div>
-                <div class="sn-title">${s.nome}</div><div class="sn-inst mono">${s.inst_name}</div>
-                ${s.net_theta ? `<div class="badge-greeks mono">NET THETA: ${s.net_theta}</div>` : ''}
-                ${s.bullets && s.bullets.length > 0 ? `<ul class="sn-bullets bullet-conv" style="margin-top:16px;">${s.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ``}
-                <div class="sn-legs">${s.legs.map(l => `<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><div style="position:relative;"><span class="limit-tag">LIMIT</span><span class="l-price-audited mono">$${l.preco_real}</span></div></div>`).join('')}</div>
-                <div class="metrics-grid">
-                    <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">$${s.max_loss}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Lucro Máx</div><div class="m-val mono" style="color:var(--accent)">$${s.max_profit}</div></div>
-                    <div class="m-cell"><div class="m-lbl">B.E.</div><div class="m-val mono">$${s.be_calc}</div></div>
-                    <div class="m-cell"><div class="m-lbl">R:R</div><div class="m-val mono" style="color:var(--accent2)">${s.rr_ratio}</div></div>
-                    <div class="m-cell"><div class="m-lbl">ROI %</div><div class="m-val mono"><span class="badge-roi">${s.roi_pct}</span></div></div>
-                </div>
-              </div>
-            </div>`;
-      }
-      if (d.cardapio_convexity && d.cardapio_convexity.length > 0) {
-          html += `<div class="block-title" style="margin-top:24px;">TACTICAL MENU</div><div class="tac-grid">`;
-          d.cardapio_convexity.forEach(s => {
-              html += `<div class="tac-card ${!s.is_valid ? 't-err' : (s.flow_type==='CREDIT' ? 't-spr' : 't-dir')}">
-                  <div class="t-head"><div><div class="t-type" style="color:var(--accent2)">TACTIC</div><div class="t-name">${s.nome}</div></div></div>
-                  <div class="sn-legs" style="background:transparent; padding:0; border:none; margin-bottom:16px;">${s.legs.map(l => `<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><div style="position:relative;"><span class="limit-tag">LIMIT</span><span class="l-price-audited mono">$${l.preco_real}</span></div></div>`).join('')}</div>
-                  ${s.net_theta ? `<div class="badge-greeks mono" style="margin-bottom:12px;">NET THETA: ${s.net_theta}</div>` : ''}
-                  <div class="metrics-grid">
-                    <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">$${s.max_loss}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Lucro Máx</div><div class="m-val mono" style="color:var(--accent)">$${s.max_profit}</div></div>
-                  </div>
-                </div>`;
-          });
-          html += `</div>`;
-      }
-      html += `</div>`; 
+data.options.forEach(sell=>{
 
-      // --- TAB INCOME ---
-      html += `<div id="tabIncome" class="tab-content">`;
-      if (d.best_play_income && d.best_play_income.legs.length > 0) {
-          const s = d.best_play_income;
-          html += `
-            <div class="sniper-wrapper sn-inc">
-              <div class="sniper-op">
-                <div class="sn-badge badge-inc">BEST PLAY (INCOME)</div>
-                <div class="sn-title">${s.nome}</div><div class="sn-inst mono">${s.inst_name}</div>
-                ${s.net_theta ? `<div class="badge-greeks mono" style="border-color:var(--warn); color:var(--warn);">NET THETA: ${s.net_theta}</div>` : ''}
-                ${s.bullets && s.bullets.length > 0 ? `<ul class="sn-bullets bullet-inc" style="margin-top:16px;">${s.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ``}
-                <div class="sn-legs">${s.legs.map(l => `<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><div style="position:relative;"><span class="limit-tag">LIMIT</span><span class="l-price-audited mono">$${l.preco_real}</span></div></div>`).join('')}</div>
-                <div class="metrics-grid">
-                    <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">${s.max_loss === 'ATIVO SPOT' ? 'SPOT' : '$'+s.max_loss}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Lucro Máx</div><div class="m-val mono" style="color:var(--accent)">$${s.max_profit}</div></div>
-                    <div class="m-cell"><div class="m-lbl">B.E.</div><div class="m-val mono">$${s.be_calc}</div></div>
-                    <div class="m-cell"><div class="m-lbl">R:R</div><div class="m-val mono" style="color:var(--accent2)">${s.rr_ratio}</div></div>
-                    <div class="m-cell"><div class="m-lbl">${s.inst_name.includes('COVERED') ? 'YIELD %' : 'ROI %'}</div><div class="m-val mono"><span class="badge-yield">${s.roi_pct}</span></div></div>
-                </div>
-              </div>
-            </div>`;
-      }
-      if (d.cardapio_income && d.cardapio_income.length > 0) {
-          html += `<div class="block-title" style="margin-top:24px;">TACTICAL MENU</div><div class="tac-grid">`;
-          d.cardapio_income.forEach(s => {
-              let isCovered = s.inst_name && s.inst_name.includes('COVERED');
-              html += `<div class="tac-card ${!s.is_valid ? 't-err' : 't-hdg'}">
-                  <div class="t-head"><div><div class="t-type" style="color:var(--warn)">TACTIC</div><div class="t-name">${s.nome}</div></div></div>
-                  <div class="sn-legs" style="background:transparent; padding:0; border:none; margin-bottom:16px;">${s.legs.map(l => `<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><div style="position:relative;"><span class="limit-tag">LIMIT</span><span class="l-price-audited mono">$${l.preco_real}</span></div></div>`).join('')}</div>
-                  ${s.net_theta ? `<div class="badge-greeks mono" style="border-color:var(--warn); color:var(--warn); margin-bottom:12px;">NET THETA: ${s.net_theta}</div>` : ''}
-                  <div class="metrics-grid">
-                    <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">${s.max_loss === 'ATIVO SPOT' ? 'SPOT' : '$'+s.max_loss}</div></div>
-                    <div class="m-cell"><div class="m-lbl">${isCovered ? 'YIELD %' : 'ROI %'}</div><div class="m-val mono"><span class="badge-yield">${s.roi_pct}</span></div></div>
-                  </div>
-                </div>`;
-          });
-          html += `</div>`;
-      }
-      html += `</div>`; 
-  }
+if(sell.strike>buy.strike){
 
-  const res = document.getElementById('result'); res.innerHTML = html; res.classList.add('active');
+const cost=buy.ask-sell.bid
+
+if(cost<=0) return
+
+const profit=(sell.strike-buy.strike)-cost
+
+const rr=profit/cost
+
+if(rr>2){
+
+best={
+buy:buy.strike,
+sell:sell.strike,
+cost,
+profit,
+rr
 }
+
+}
+
+}
+
+})
+
+})
+
+return best
+
+}
+
+function renderStrategy(s){
+
+if(!s){
+
+document.getElementById("strategyBox").innerHTML="Nenhuma trava encontrada"
+
+return
+
+}
+
+document.getElementById("strategyBox").innerHTML=`
+
+<div class="strategy">
+
+<h3>Melhor Estrutura</h3>
+
+Comprar CALL ${s.buy}
+
+<br>
+
+Vender CALL ${s.sell}
+
+<br><br>
+
+Custo: ${s.cost}
+
+<br>
+
+Lucro máximo: ${s.profit}
+
+<br>
+
+Risk Reward: ${s.rr.toFixed(2)}
+
+</div>
+
+`
+
+}
+
 </script>
+
 </body>
+
 </html>
-
-
