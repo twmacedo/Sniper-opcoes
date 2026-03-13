@@ -1,248 +1,238 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SNIPER TERMINAL — Direct Link v23.0</title>
+<title>SNIPER TERMINAL — v15.0 Claude Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #000000;
-    --surface: #0a0b0e;
-    --surface2: #14151a;
-    --border: #20222a;
-    --border2: #2f313d;
-    --accent: #00ff9d; 
-    --accent-dim: rgba(0,255,157,0.15);
-    --accent2: #00b8ff;
-    --danger: #ff2a4d;
-    --danger-dim: rgba(255,42,77,0.15);
-    --warn: #ffb800;
-    --warn-dim: rgba(255,184,0,0.15);
-    --text: #ffffff;
-    --text2: #94a3b8;
-    --text3: #56657f;
+    --bg: #000000; --surface: #0a0b0e; --surface2: #14151a;
+    --border: #20222a; --border2: #2f313d;
+    --accent: #00ff9d; --accent-dim: rgba(0,255,157,0.15); --accent2: #00b8ff;
+    --danger: #ff2a4d; --danger-dim: rgba(255,42,77,0.15);
+    --warn: #ffb800; --warn-dim: rgba(255,184,0,0.15);
+    --text: #ffffff; --text2: #94a3b8; --text3: #56657f;
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'Inter', sans-serif; 
-    min-height: 100vh; overflow-x: hidden;
-  }
-  .mono { font-family: 'Space Mono', monospace; }
-
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(0,255,157,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,157,0.02) 1px, transparent 1px);
-    background-size: 30px 30px; pointer-events: none; z-index: 0;
-  }
-
-  .container { max-width: 600px; margin: 0 auto; padding: 0 16px 80px; position: relative; z-index: 1; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+  .mono { font-family:'Space Mono',monospace; }
+  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,255,157,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,157,0.02) 1px,transparent 1px); background-size:30px 30px; pointer-events:none; z-index:0; }
+  .container { max-width:600px; margin:0 auto; padding:0 16px 80px; position:relative; z-index:1; }
 
   /* HEADER */
-  header { padding: 24px 0 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px; position: relative; display: flex; justify-content: space-between; align-items: flex-start;}
-  .logo-block { flex: 1; }
-  .logo { font-weight: 900; font-size: 24px; letter-spacing: 0.02em; color: var(--text); }
-  .logo span { color: var(--accent); }
-  .sub-logo { color: var(--text3); font-weight: 700; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 4px;}
-  
-  .settings-btn { background: var(--surface2); border: 1px solid var(--border2); color: var(--accent); font-size: 16px; width: 36px; height: 36px; border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s;}
+  header { padding:24px 0 16px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+  .logo { font-weight:900; font-size:24px; letter-spacing:0.02em; color:var(--text); }
+  .logo span { color:var(--accent); }
+  .sub-logo { color:var(--text3); font-weight:700; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; margin-top:4px; }
+  .status-bar { display:flex; justify-content:space-between; align-items:center; margin-top:16px; }
+  .badge-outline { border:1px solid var(--border2); padding:4px 8px; border-radius:4px; font-size:9px; font-weight:700; letter-spacing:0.1em; color:var(--text2); display:flex; align-items:center; gap:6px; }
+  .badge-outline.active { border-color:rgba(0,255,157,0.4); color:var(--accent); background:var(--accent-dim); }
+  .dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.3;} }
 
-  .status-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; clear: both;}
-  .badge-outline { border: 1px solid var(--border2); padding: 4px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--text2); display: flex; align-items: center; gap: 6px; }
-  .badge-outline.active { border-color: rgba(0,255,157,0.4); color: var(--accent); background: var(--accent-dim); }
-  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  /* UPLOAD */
+  .section-label { font-size:10px; font-weight:800; letter-spacing:0.2em; color:var(--text3); margin-bottom:16px; text-transform:uppercase; display:flex; align-items:center; gap:12px; }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .asset-selector { display:flex; gap:8px; margin-bottom:20px; overflow-x:auto; padding-bottom:4px; }
+  .chip { padding:10px 24px; border-radius:6px; border:1px solid var(--border2); background:var(--surface); color:var(--text2); font-weight:700; font-size:12px; cursor:pointer; transition:0.2s; white-space:nowrap; }
+  .chip.active { background:var(--accent-dim); border-color:var(--accent); color:var(--accent); }
+  .upload-box { border:1px solid var(--border2); border-radius:8px; padding:20px; margin-bottom:16px; background:var(--surface); position:relative; overflow:hidden; display:flex; flex-direction:column; }
+  .upload-box input { position:absolute; inset:0; opacity:0; cursor:pointer; z-index:2; }
+  .box-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .box-title { font-size:13px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:8px; }
+  .box-tag { font-size:8px; font-weight:800; letter-spacing:0.1em; color:var(--text3); border:1px solid var(--border); padding:2px 6px; border-radius:4px; }
+  .box-desc { font-size:11px; color:var(--text2); line-height:1.4; margin-top:4px; }
+  .preview-area { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; position:relative; z-index:3; }
+  .thumb { position:relative; width:60px; height:60px; border-radius:6px; overflow:hidden; border:1px solid var(--border2); }
+  .thumb img { width:100%; height:100%; object-fit:cover; }
+  .btn-remove { position:absolute; top:0; right:0; background:rgba(255,42,77,0.9); border:none; color:#fff; width:22px; height:22px; font-size:14px; font-weight:bold; border-bottom-left-radius:6px; cursor:pointer; }
+  .btn-main { width:100%; padding:18px; border:none; border-radius:8px; font-weight:800; font-size:13px; letter-spacing:0.1em; cursor:pointer; transition:0.2s; text-transform:uppercase; margin-top:12px; margin-bottom:12px; }
+  .btn-green { background:var(--accent); color:#000; box-shadow:0 4px 15px rgba(0,255,157,0.2); }
+  .btn-yellow { background:var(--warn); color:#000; box-shadow:0 4px 15px rgba(255,184,0,0.2); }
+  .btn-outline { background:transparent; border:1px solid var(--border2); color:var(--text2); }
+  .btn-main:disabled { background:var(--surface2); color:var(--text3); box-shadow:none; border:1px solid var(--border); pointer-events:none; }
+  .btn-main:hover:not(:disabled) { filter:brightness(1.1); transform:translateY(-1px); }
 
-  /* UPLOAD MODULE */
-  .section-label { font-size: 10px; font-weight: 800; letter-spacing: 0.2em; color: var(--text3); margin-bottom: 16px; text-transform: uppercase; display: flex; align-items: center; gap: 12px;}
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  
-  .asset-selector { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px;}
-  .chip { padding: 10px 24px; border-radius: 6px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; white-space: nowrap;}
-  .chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  /* LOADER */
+  .loader { display:none; text-align:center; padding:60px 20px; background:var(--surface); border:1px solid var(--border); border-radius:8px; margin-bottom:24px; }
+  .loader.active { display:block; }
+  .spinner { width:40px; height:40px; border:3px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
+  @keyframes spin { to{transform:rotate(360deg);} }
+  .loader-text { font-size:11px; font-weight:800; letter-spacing:0.2em; color:var(--accent); }
+  .loader-steps { margin-top:20px; display:flex; flex-direction:column; gap:8px; text-align:left; max-width:260px; margin-left:auto; margin-right:auto; }
+  .l-step { font-size:11px; color:var(--text3); display:flex; align-items:center; gap:10px; transition:color 0.3s; }
+  .l-step.on { color:var(--accent); }
+  .l-step.done { color:var(--text2); }
+  .l-dot { width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0; }
 
-  .upload-box { border: 1px solid var(--border2); border-radius: 8px; padding: 20px; margin-bottom: 16px; background: var(--surface); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-  .upload-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
-  .box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;}
-  .box-title { font-size: 13px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px;}
-  .box-tag { font-size: 8px; font-weight: 800; letter-spacing: 0.1em; color: var(--text3); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px;}
-  .box-desc { font-size: 11px; color: var(--text2); line-height: 1.4; margin-top: 4px;}
-
-  .preview-area { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; position: relative; z-index: 3;}
-  .thumb { position: relative; width: 60px; height: 60px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border2); }
-  .thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .btn-remove { position: absolute; top: 0; right: 0; background: rgba(255,42,77,0.9); border: none; color: #fff; width: 22px; height: 22px; font-size: 14px; font-weight: bold; border-bottom-left-radius: 6px;}
-
-  .btn-main { width: 100%; padding: 18px; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; letter-spacing: 0.1em; cursor: pointer; transition: 0.2s; text-transform: uppercase; margin-top: 12px; margin-bottom: 24px; }
-  .btn-green { background: var(--accent); color: #000; box-shadow: 0 4px 15px rgba(0,255,157,0.2); }
-  .btn-yellow { background: var(--warn); color: #000; box-shadow: 0 4px 15px rgba(255,184,0,0.2); }
-  .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
-  .btn-main:disabled { background: var(--surface2); color: var(--text3); box-shadow: none; border: 1px solid var(--border); pointer-events: none;}
-
-  .loader { display: none; text-align: center; padding: 60px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px; }
-  .loader.active { display: block; }
-  .spinner { width: 40px; height: 40px; border: 3px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-text { font-size: 11px; font-weight: 800; letter-spacing: 0.2em; color: var(--accent); }
-
-  .alert { padding: 16px; border-radius: 8px; font-size: 12px; line-height: 1.5; margin-bottom: 20px; display: none; word-wrap: break-word;}
-  .alert.active { display: block; }
-  .alert-error { background: var(--danger-dim); border: 1px solid rgba(255,42,77,0.3); color: #ff6b81; }
+  /* ALERTS */
+  .alert { padding:16px; border-radius:8px; font-size:12px; line-height:1.5; margin-bottom:20px; display:none; }
+  .alert.active { display:block; }
+  .alert-error { background:var(--danger-dim); border:1px solid rgba(255,42,77,0.3); color:#ff6b81; }
+  .alert-warn { background:var(--warn-dim); border:1px solid rgba(255,184,0,0.3); color:#ffd32a; }
 
   /* OCR REVIEW */
-  #ocrReview { display: none; }
-  #ocrReview.active { display: block; animation: fadeIn 0.3s ease; }
-  
-  .ocr-seal-box { display: flex; justify-content: space-between; align-items: center; background: var(--surface2); border: 1px solid var(--border); padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;}
-  .seal-title { font-size: 8px; font-weight: 800; letter-spacing: 0.2em; color: var(--text3); text-transform: uppercase; margin-bottom: 6px;}
-  .seal-badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; display: inline-block;}
-  .seal-ok { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,255,157,0.3); }
-  .seal-warn { background: var(--warn-dim); color: var(--warn); border: 1px solid rgba(255,184,0,0.3); }
-  .seal-danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(255,42,77,0.3); }
-  
-  .decisional-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .ds-card { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 8px; }
-  .ds-card.spot-alert { border-color: var(--danger); background: var(--danger-dim); }
-  .ds-lbl { font-size: 9px; font-weight: 800; color: var(--text3); letter-spacing: 0.1em; margin-bottom: 6px; text-transform: uppercase;}
-  .ds-val { font-size: 15px; font-weight: 800; color: var(--text); }
-  
-  .table-wrapper { overflow-y: auto; overflow-x: auto; max-height: 35vh; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; position: relative;}
-  table { width: 100%; border-collapse: collapse; min-width: 480px; text-align: left; }
-  th { padding: 10px 14px; font-size: 9px; font-weight: 800; color: var(--text3); background: var(--surface2); border-bottom: 1px solid var(--border2); letter-spacing: 0.05em; position: sticky; top: 0; z-index: 10;}
-  td { padding: 12px 14px; font-size: 11px; color: var(--text2); border-bottom: 1px solid var(--border); vertical-align: middle;}
-  tr:last-child td { border-bottom: none; }
-  tr.suspect { background: var(--warn-dim); border-left: 2px solid var(--warn);}
-  tr.suspect td { color: var(--warn); font-weight: 500;}
-  tr.atm-row { background: rgba(0,255,157,0.05); border-left: 2px solid var(--accent); }
-  .atm-badge { background: var(--accent); color: #000; font-size: 8px; font-weight: 800; padding: 2px 4px; border-radius: 2px; margin-left: 6px; letter-spacing: 0.1em;}
-  
-  .del-row-btn { background: transparent; border: 1px solid var(--border2); color: var(--danger); width: 28px; height: 28px; border-radius: 6px; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer;}
-  
-  .manual-adder { background: var(--surface2); border: 1px dashed var(--border2); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
-  .ma-title { font-size: 10px; font-weight: 800; color: var(--accent2); letter-spacing: 0.1em; margin-bottom: 12px; text-transform: uppercase; display:flex; justify-content: space-between;}
-  .ma-inputs { display: flex; gap: 8px; margin-bottom: 10px; }
-  .ma-inputs input, .ma-inputs select { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 4px; font-size: 12px; font-family: 'Space Mono', monospace; width: 100%; outline: none;}
-  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 8px; }
+  #ocrReview { display:none; }
+  #ocrReview.active { display:block; animation:fadeIn 0.3s ease; }
+  .ocr-seal-box { display:flex; justify-content:space-between; align-items:center; background:var(--surface2); border:1px solid var(--border); padding:14px 16px; border-radius:8px; margin-bottom:16px; }
+  .seal-title { font-size:8px; font-weight:800; letter-spacing:0.2em; color:var(--text3); text-transform:uppercase; margin-bottom:6px; }
+  .seal-badge { padding:4px 10px; border-radius:4px; font-size:11px; font-weight:800; letter-spacing:0.1em; display:inline-block; }
+  .seal-ok { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(0,255,157,0.3); }
+  .seal-warn { background:var(--warn-dim); color:var(--warn); border:1px solid rgba(255,184,0,0.3); }
+  .seal-danger { background:var(--danger-dim); color:var(--danger); border:1px solid rgba(255,42,77,0.3); }
+  .decisional-summary { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .ds-card { background:var(--surface); border:1px solid var(--border); padding:14px; border-radius:8px; }
+  .ds-card.spot-alert { border-color:var(--danger); background:var(--danger-dim); }
+  .ds-lbl { font-size:9px; font-weight:800; color:var(--text3); letter-spacing:0.1em; margin-bottom:6px; text-transform:uppercase; }
+  .ds-val { font-size:15px; font-weight:800; color:var(--text); }
 
-  /* FINAL RESULT */
-  #result { display: none; margin-bottom: 40px; }
-  #result.active { display: block; animation: fadeIn 0.4s ease; }
+  /* TABLE */
+  .table-wrapper { overflow-y:auto; overflow-x:auto; max-height:35vh; background:var(--surface); border:1px solid var(--border); border-radius:8px; margin-bottom:16px; }
+  table { width:100%; border-collapse:collapse; min-width:400px; text-align:left; }
+  th { padding:10px 14px; font-size:9px; font-weight:800; color:var(--text3); background:var(--surface2); border-bottom:1px solid var(--border2); letter-spacing:0.05em; position:sticky; top:0; z-index:10; }
+  td { padding:10px 14px; font-size:11px; color:var(--text2); border-bottom:1px solid var(--border); vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tr.suspect { background:var(--warn-dim); border-left:2px solid var(--warn); }
+  tr.suspect td { color:var(--warn); font-weight:500; }
+  tr.atm-row { background:rgba(0,255,157,0.05); border-left:2px solid var(--accent); }
+  .atm-badge { background:var(--accent); color:#000; font-size:8px; font-weight:800; padding:2px 4px; border-radius:2px; margin-left:6px; letter-spacing:0.1em; }
+  .del-row-btn { background:transparent; border:1px solid var(--border2); color:var(--danger); width:28px; height:28px; border-radius:6px; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; }
+  .del-row-btn:active { background:rgba(255,42,77,0.2); }
+  .tag { padding:4px 6px; border-radius:4px; font-size:9px; font-weight:800; letter-spacing:0.05em; }
+  .tag-c { background:var(--accent-dim); color:var(--accent); }
+  .tag-p { background:var(--danger-dim); color:var(--danger); }
 
-  .hero-dash { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; position: relative; overflow: hidden;}
-  .sys-health-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--border2); }
-  .sys-health-fill { height: 100%; background: var(--accent); transition: 0.5s; }
-  
-  .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;}
-  .h-asset { font-size: 36px; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 6px; letter-spacing: -0.02em;}
-  .h-meta { font-size: 11px; font-weight: 600; color: var(--text3); }
-  .h-score-val { font-size: 48px; font-weight: 900; color: var(--accent); line-height: 1; text-align: right; letter-spacing: -0.02em;}
-  .h-score-lbl { font-size: 9px; font-weight: 800; color: var(--text3); letter-spacing: 0.1em; text-align: right; margin-top: 6px; text-transform: uppercase;}
+  /* MANUAL ADDER */
+  .manual-adder { background:var(--surface2); border:1px dashed var(--border2); border-radius:8px; padding:16px; margin-bottom:24px; }
+  .ma-title { font-size:10px; font-weight:800; color:var(--accent2); letter-spacing:0.1em; margin-bottom:12px; text-transform:uppercase; }
+  .ma-inputs { display:flex; gap:8px; margin-bottom:10px; }
+  .ma-inputs input, .ma-inputs select { flex:1; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px; border-radius:4px; font-size:12px; font-family:'Space Mono',monospace; width:100%; outline:none; }
+  .ma-inputs input:focus, .ma-inputs select:focus { border-color:var(--accent2); }
+  .grid-4 { display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr; gap:8px; }
 
-  .hero-data { display: flex; gap: 10px; border-top: 1px solid var(--border); padding-top: 16px; }
-  .h-data-item { flex: 1; border-left: 1px solid var(--border2); padding-left: 12px;}
-  .h-data-item:first-child { border-left: none; padding-left: 0; }
-  .h-d-lbl { font-size: 9px; font-weight: 800; color: var(--text3); letter-spacing: 0.1em; margin-bottom: 6px; text-transform: uppercase;}
-  .h-d-val { font-size: 12px; font-weight: 800; color: var(--text); }
+  /* RESULT */
+  #result { display:none; margin-bottom:40px; }
+  #result.active { display:block; animation:fadeIn 0.4s ease; }
 
-  .block-title { font-size: 11px; font-weight: 800; color: var(--text2); letter-spacing: 0.15em; margin-bottom: 14px; margin-top: 28px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;}
-  .block-title::before { content: ''; width: 6px; height: 6px; background: var(--border2); border-radius: 50%; }
+  /* HERO DASH */
+  .hero-dash { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:16px; position:relative; overflow:hidden; }
+  .sys-health-bar { position:absolute; top:0; left:0; right:0; height:4px; background:var(--border2); }
+  .sys-health-fill { height:100%; background:var(--accent); transition:0.5s; }
+  .hero-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; }
+  .h-asset { font-size:36px; font-weight:900; color:var(--text); line-height:1; margin-bottom:6px; letter-spacing:-0.02em; }
+  .h-meta { font-size:11px; font-weight:600; color:var(--text3); }
+  .h-score-val { font-size:48px; font-weight:900; color:var(--accent); line-height:1; text-align:right; letter-spacing:-0.02em; }
+  .h-score-lbl { font-size:9px; font-weight:800; color:var(--text3); letter-spacing:0.1em; text-align:right; margin-top:6px; text-transform:uppercase; }
+  .hero-data { display:flex; gap:10px; border-top:1px solid var(--border); padding-top:16px; }
+  .h-data-item { flex:1; border-left:1px solid var(--border2); padding-left:12px; }
+  .h-data-item:first-child { border-left:none; padding-left:0; }
+  .h-d-lbl { font-size:9px; font-weight:800; color:var(--text3); letter-spacing:0.1em; margin-bottom:6px; text-transform:uppercase; }
+  .h-d-val { font-size:12px; font-weight:800; color:var(--text); }
 
-  .risk-box { border-left: 3px solid var(--danger); background: var(--danger-dim); padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 12px;}
-  .r-title { font-size: 11px; font-weight: 800; color: var(--danger); margin-bottom: 6px;}
-  .r-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  /* RISK BOXES */
+  .block-title { font-size:11px; font-weight:800; color:var(--text2); letter-spacing:0.15em; margin-bottom:14px; margin-top:28px; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+  .block-title::before { content:''; width:6px; height:6px; background:var(--border2); border-radius:50%; }
+  .risk-box { border-left:3px solid var(--danger); background:var(--danger-dim); padding:16px; border-radius:0 8px 8px 0; margin-bottom:12px; }
+  .r-title { font-size:11px; font-weight:800; color:var(--danger); margin-bottom:6px; }
+  .r-desc { font-size:12px; color:var(--text2); line-height:1.5; }
 
-  /* TABS SYSTEM */
-  .tabs-container { display: flex; gap: 8px; background: var(--surface); padding: 6px; border-radius: 8px; border: 1px solid var(--border); margin-top: 24px; margin-bottom: 16px;}
-  .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 6px; background: transparent; color: var(--text2); font-weight: 800; font-size: 11px; letter-spacing: 0.05em; cursor: pointer; transition: 0.2s;}
-  .tab-btn.active.tab-conv { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,255,157,0.3);}
-  .tab-btn.active.tab-inc { background: var(--warn-dim); color: var(--warn); border: 1px solid rgba(255,184,0,0.3);}
-  .tab-content { display: none; animation: fadeIn 0.3s ease; }
-  .tab-content.active { display: block; }
+  /* TABS */
+  .tabs-container { display:flex; gap:8px; background:var(--surface); padding:6px; border-radius:8px; border:1px solid var(--border); margin-top:24px; margin-bottom:16px; }
+  .tab-btn { flex:1; padding:12px; border:none; border-radius:6px; background:transparent; color:var(--text2); font-weight:800; font-size:11px; letter-spacing:0.05em; cursor:pointer; transition:0.2s; }
+  .tab-btn.active.tab-conv { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(0,255,157,0.3); }
+  .tab-btn.active.tab-inc { background:var(--warn-dim); color:var(--warn); border:1px solid rgba(255,184,0,0.3); }
+  .tab-content { display:none; animation:fadeIn 0.3s ease; }
+  .tab-content.active { display:block; }
 
-  /* Tactical Cards */
-  .tac-grid { display: flex; flex-direction: column; gap: 16px; }
-  .tac-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: relative; overflow: hidden;}
-  .tac-card.t-dir { border-top: 4px solid var(--accent); }
-  .tac-card.t-spr { border-top: 4px solid var(--accent2); }
-  .tac-card.t-hdg { border-top: 4px solid var(--warn); }
-  .tac-card.t-err { border-top: 4px solid var(--danger); opacity: 0.6;}
-  
-  .t-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .t-type { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase;}
-  .t-name { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 4px; letter-spacing: -0.02em;}
-  .t-inst { font-size: 10px; font-weight: 700; color: var(--accent2); margin-bottom: 12px;}
-  .t-resumo { font-size: 12px; color: var(--text2); margin-bottom: 20px; font-style: italic; line-height: 1.4;}
-  
-  .leg-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 12px; }
-  .leg-row:last-of-type { border-bottom: none; margin-bottom: 20px;}
-  .l-act.buy { color: var(--accent); font-weight: 800; }
-  .l-act.sell { color: var(--danger); font-weight: 800; }
-  .l-asset { color: var(--text2); font-weight: 600; }
-  
-  .l-price-audited { color: var(--text); background: var(--surface2); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border2); position: relative;}
-  .limit-tag { position: absolute; top: -10px; right: 0; font-size: 7px; color: var(--accent2); font-weight: bold; background: var(--bg); padding: 2px 4px; border-radius: 2px;}
+  /* TACTICAL CARDS */
+  .tac-grid { display:flex; flex-direction:column; gap:16px; }
+  .tac-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; position:relative; overflow:hidden; }
+  .tac-card.t-dir { border-top:4px solid var(--accent); }
+  .tac-card.t-spr { border-top:4px solid var(--accent2); }
+  .tac-card.t-hdg { border-top:4px solid var(--warn); }
+  .tac-card.t-err { border-top:4px solid var(--danger); opacity:0.6; }
+  .t-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+  .t-type { font-size:9px; font-weight:800; letter-spacing:0.1em; color:var(--text3); text-transform:uppercase; }
+  .t-name { font-size:16px; font-weight:800; color:var(--text); margin-bottom:4px; letter-spacing:-0.02em; }
 
-  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: var(--surface2); padding: 16px; border-radius: 8px; border: 1px solid var(--border);}
-  .m-cell { display: flex; flex-direction: column; gap: 6px; }
-  .m-lbl { font-size: 9px; font-weight: 800; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; }
-  .m-val { font-size: 14px; font-weight: 800; color: var(--text); }
-  .m-credit { color: var(--warn); } .m-debit { color: var(--accent); } .m-danger { color: var(--danger); }
-  
-  .badge-roi { display: inline-block; background: var(--accent-dim); color: var(--accent); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(0,255,157,0.3); font-size: 12px;}
-  .badge-yield { display: inline-block; background: var(--warn-dim); color: var(--warn); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,184,0,0.3); font-size: 12px;}
-  .badge-greeks { display: inline-block; background: rgba(0,184,255,0.1); color: var(--accent2); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(0,184,255,0.3); font-size: 11px; margin-top: 4px;}
+  .leg-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--border); font-size:12px; }
+  .leg-row:last-of-type { border-bottom:none; margin-bottom:20px; }
+  .l-act.buy { color:var(--accent); font-weight:800; }
+  .l-act.sell { color:var(--danger); font-weight:800; }
+  .l-asset { color:var(--text2); font-weight:600; }
+  .l-price-audited { color:var(--text); background:var(--surface2); padding:4px 8px; border-radius:4px; border:1px solid var(--border2); }
+
+  .metrics-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; background:var(--surface2); padding:16px; border-radius:8px; border:1px solid var(--border); }
+  .m-cell { display:flex; flex-direction:column; gap:6px; }
+  .m-lbl { font-size:9px; font-weight:800; color:var(--text3); letter-spacing:0.05em; text-transform:uppercase; }
+  .m-val { font-size:14px; font-weight:800; color:var(--text); }
+  .m-credit { color:var(--warn); } .m-debit { color:var(--accent); } .m-danger { color:var(--danger); }
+  .badge-roi { display:inline-block; background:var(--accent-dim); color:var(--accent); padding:2px 6px; border-radius:4px; border:1px solid rgba(0,255,157,0.3); font-size:12px; }
+  .badge-yield { display:inline-block; background:var(--warn-dim); color:var(--warn); padding:2px 6px; border-radius:4px; border:1px solid rgba(255,184,0,0.3); font-size:12px; }
 
   /* SNIPER OP */
-  .sniper-wrapper { padding: 2px; border-radius: 12px; margin-top: 16px; margin-bottom: 24px;}
-  .sn-conv { background: linear-gradient(180deg, rgba(0,255,157,0.6) 0%, rgba(0,255,157,0.05) 100%); box-shadow: 0 10px 40px rgba(0,255,157,0.15); }
-  .sn-inc { background: linear-gradient(180deg, rgba(255,184,0,0.6) 0%, rgba(255,184,0,0.05) 100%); box-shadow: 0 10px 40px rgba(255,184,0,0.15); }
-  
-  .sniper-op { background: var(--surface); border-radius: 10px; padding: 24px; position: relative; }
-  .sn-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 900; padding: 6px 12px; border-radius: 6px; letter-spacing: 0.1em; margin-bottom: 12px;}
-  .badge-conv { background: var(--accent-dim); color: var(--accent); }
-  .badge-inc { background: var(--warn-dim); color: var(--warn); }
-  
-  .sn-title { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 4px; line-height: 1.2; letter-spacing: -0.02em;}
-  .sn-inst { font-size: 11px; font-weight: 700; color: var(--accent2); margin-bottom: 20px;}
-  
-  .sn-bullets { margin-bottom: 24px; padding-left: 0; list-style: none;}
-  .sn-bullets li { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; display: flex; gap: 10px; font-weight: 500;}
-  .bullet-conv li::before { content: '⚡'; color: var(--accent); font-weight: 900;}
-  .bullet-inc li::before { content: '💰'; color: var(--warn); font-weight: 900;}
+  .sniper-wrapper { padding:2px; border-radius:12px; margin-top:16px; margin-bottom:24px; }
+  .sn-conv { background:linear-gradient(180deg,rgba(0,255,157,0.6) 0%,rgba(0,255,157,0.05) 100%); box-shadow:0 10px 40px rgba(0,255,157,0.15); }
+  .sn-inc { background:linear-gradient(180deg,rgba(255,184,0,0.6) 0%,rgba(255,184,0,0.05) 100%); box-shadow:0 10px 40px rgba(255,184,0,0.15); }
+  .sniper-op { background:var(--surface); border-radius:10px; padding:24px; position:relative; }
+  .sn-badge { display:inline-flex; align-items:center; gap:6px; font-size:9px; font-weight:900; padding:6px 12px; border-radius:6px; letter-spacing:0.1em; margin-bottom:12px; }
+  .badge-conv { background:var(--accent-dim); color:var(--accent); }
+  .badge-inc { background:var(--warn-dim); color:var(--warn); }
+  .sn-title { font-size:22px; font-weight:900; color:var(--text); margin-bottom:4px; line-height:1.2; letter-spacing:-0.02em; }
+  .sn-inst { font-size:11px; font-weight:700; color:var(--accent2); margin-bottom:20px; }
+  .sn-bullets { margin-bottom:24px; padding-left:0; list-style:none; }
+  .sn-bullets li { font-size:13px; color:var(--text2); line-height:1.5; margin-bottom:10px; display:flex; gap:10px; font-weight:500; }
+  .bullet-conv li::before { content:'⚡'; color:var(--accent); font-weight:900; }
+  .bullet-inc li::before { content:'💰'; color:var(--warn); font-weight:900; }
+  .sn-legs { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:20px; }
 
-  .sn-legs { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+  /* KILL SWITCH */
+  .kill-switch { background:var(--danger-dim); border:1px solid rgba(255,42,77,0.4); border-radius:12px; padding:32px 20px; text-align:center; margin-top:16px; }
+  .ks-icon { font-size:32px; margin-bottom:12px; }
+  .ks-title { font-size:16px; font-weight:800; color:var(--danger); margin-bottom:8px; letter-spacing:0.1em; }
+  .ks-desc { font-size:13px; color:var(--text2); line-height:1.5; }
 
-  .verdict-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; text-align: center; margin-top: 32px;}
-  .v-title { font-size: 11px; font-weight: 900; color: var(--accent); letter-spacing: 0.2em; margin-bottom: 12px; text-transform: uppercase;}
-  .v-text { font-size: 15px; color: var(--text); line-height: 1.6; font-weight: 600;}
+  /* VERDICT */
+  .verdict-box { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:24px; text-align:center; margin-top:32px; }
+  .v-title { font-size:11px; font-weight:900; color:var(--accent); letter-spacing:0.2em; margin-bottom:12px; text-transform:uppercase; }
+  .v-text { font-size:15px; color:var(--text); line-height:1.6; font-weight:600; }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  /* INTEL GRID */
+  .intel-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
+  .intel-box { background:rgba(0,184,255,0.03); border:1px solid rgba(0,184,255,0.15); padding:14px; border-radius:8px; }
+  .intel-lbl { font-size:9px; font-weight:800; color:var(--accent2); letter-spacing:0.1em; margin-bottom:6px; text-transform:uppercase; }
+  .intel-val { font-size:14px; font-weight:800; color:var(--text); }
+
+  /* OCR CONFIDENCE BAR */
+  .conf-bar-wrap { margin-top:8px; }
+  .conf-bar-bg { background:var(--border); border-radius:4px; height:4px; overflow:hidden; }
+  .conf-bar-fill { height:100%; border-radius:4px; transition:width 0.5s; }
+
+  .m-danger { color: var(--danger); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
 </style>
 </head>
 <body>
-
 <div class="container">
 
   <header>
     <div class="logo-block">
       <div class="logo">SNIPER<span>.</span>TERM</div>
-      <div class="sub-logo">Pro Desk v23 Direct Link</div>
+      <div class="sub-logo">Pro Desk v15.0 — Claude OCR Engine</div>
     </div>
-    <div class="settings-btn" onclick="alert('A sua NOVA API KEY está ligada diretamente no núcleo para este teste.')">🔑</div>
+    <div class="status-bar">
+      <div class="badge-outline active"><div class="dot"></div> ENGINE ON</div>
+      <div class="badge-outline mono" id="clock">--:--</div>
+    </div>
   </header>
-
-  <div class="status-bar">
-    <div class="badge-outline active" style="color:var(--accent); border-color:rgba(0,255,157,0.4);"><div class="dot"></div> API KEY CONNECTED</div>
-    <div class="badge-outline mono" id="clock">--:--</div>
-  </div>
 
   <div class="alert alert-error" id="errorBox"></div>
 
+  <!-- UPLOAD PANEL -->
   <div id="uploadPanel">
-    <div class="section-label" style="margin-top:24px;">01 // DATA INGESTION</div>
+    <div class="section-label">01 // DATA INGESTION</div>
     <div class="asset-selector" id="assetGroup">
       <div class="chip active" data-asset="ETH">ETH</div>
       <div class="chip" data-asset="BTC">BTC</div>
@@ -250,61 +240,79 @@
     </div>
     <div class="upload-box" id="dropZoneChain">
       <input type="file" id="fileChain" accept="image/*" multiple>
-      <div class="box-header"><div class="box-title">⛓️ Option Chain / Greeks</div><div class="box-tag">REQUIRED</div></div>
-      <div class="box-desc">Strikes, Bid/Ask, Theta, Gamma, Delta</div>
+      <div class="box-header">
+        <div class="box-title">⛓️ Option Chain</div>
+        <div class="box-tag">REQUIRED</div>
+      </div>
+      <div class="box-desc">Prints de Strikes, Bid/Ask, Delta, Greeks, Volume</div>
       <div class="preview-area" id="previewChain"></div>
     </div>
     <div class="upload-box" id="dropZoneChart">
       <input type="file" id="fileChart" accept="image/*" multiple>
-      <div class="box-header"><div class="box-title">📊 Macro / Vol</div><div class="box-tag">OPTIONAL</div></div>
-      <div class="box-desc">Gráfico Spot ou BVIV</div>
+      <div class="box-header">
+        <div class="box-title">📊 Macro / Vol</div>
+        <div class="box-tag">OPTIONAL</div>
+      </div>
+      <div class="box-desc">Gráfico Spot ou BVIV (Volatilidade Implícita)</div>
       <div class="preview-area" id="previewChart"></div>
     </div>
-    <button class="btn-main btn-green" id="btnOcr" disabled>Extrair Dados (OCR)</button>
-    <button class="btn-main btn-outline" style="margin-top:0;" onclick="forceManualMode()">Pular e Usar Modo Manual</button>
+    <button class="btn-main btn-green" id="btnOcr" disabled>🔍 Extrair Dados (OCR Claude)</button>
+    <button class="btn-main btn-outline" style="margin-top:0;" onclick="forceManualMode()">Pular → Modo Manual</button>
   </div>
 
+  <!-- LOADER -->
   <div class="loader" id="loadingBlock">
     <div class="spinner"></div>
-    <div class="loader-text" id="loadingText">A INICIAR MOTOR...</div>
+    <div class="loader-text" id="loadingText">PROCESSANDO...</div>
+    <div class="loader-steps">
+      <div class="l-step" id="ls1"><div class="l-dot"></div><span>LIMPANDO IMAGENS (CANVAS)</span></div>
+      <div class="l-step" id="ls2"><div class="l-dot"></div><span>CLAUDE OCR — EXTRAINDO DADOS</span></div>
+      <div class="l-step" id="ls3"><div class="l-dot"></div><span>AUDITANDO STRIKES & SPREADS</span></div>
+      <div class="l-step" id="ls4"><div class="l-dot"></div><span>CALCULANDO INTEL DA CHAIN</span></div>
+      <div class="l-step" id="ls5"><div class="l-dot"></div><span>MONTANDO CARDÁPIO TÁTICO</span></div>
+    </div>
   </div>
 
+  <!-- OCR REVIEW & MANUAL OVERRIDE -->
   <div id="ocrReview">
-    <div class="section-label" style="color:var(--warn)">02 // DATA VALIDATION (SMART ROUTING)</div>
-    
+    <div class="section-label" style="color:var(--warn)">02 // DATA VALIDATION & OVERRIDE</div>
     <div class="ocr-seal-box">
-      <div><div class="seal-title">Status da Tabela</div><div class="seal-badge" id="ocrSealBadge">--</div></div>
-      <div style="text-align: right;"><div class="seal-title">Confidence</div><div class="seal-badge mono" style="background:transparent; border:1px solid var(--border); color:var(--text);" id="ocrConfBadge">--</div></div>
+      <div>
+        <div class="seal-title">Status da Tabela</div>
+        <div class="seal-badge" id="ocrSealBadge">--</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="seal-title">Confidence</div>
+        <div class="seal-badge mono" style="background:transparent;border:1px solid var(--border);color:var(--text);" id="ocrConfBadge">--</div>
+      </div>
     </div>
-
     <div class="decisional-summary" id="ocrSummary"></div>
-
     <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr><th>STRIKE</th><th>TYPE</th><th>BID</th><th>ASK</th><th>MID (LIMIT)</th><th>THETA</th></tr>
-            </thead>
-            <tbody id="ocrTableBody" class="mono"></tbody>
-        </table>
+      <table>
+        <thead>
+          <tr><th>STRIKE</th><th>TIPO</th><th>BID</th><th>ASK</th><th>DEL</th><th>VOL</th><th>ACT</th></tr>
+        </thead>
+        <tbody id="ocrTableBody" class="mono"></tbody>
+      </table>
     </div>
 
+    <!-- MANUAL INPUT -->
     <div class="manual-adder">
-      <div class="ma-title"><span>✍️ MODO MANUAL / CORREÇÃO</span></div>
+      <div class="ma-title">✍️ MODO MANUAL / CORREÇÃO</div>
       <div class="ma-inputs">
         <input type="number" id="ma-spot" placeholder="Preço Spot" onchange="updateSpotExpiry()">
-        <input type="text" id="ma-expiry" placeholder="Vencimento" onchange="updateSpotExpiry()">
+        <input type="text" id="ma-expiry" placeholder="Vencimento (ex: 20/03)" onchange="updateSpotExpiry()">
       </div>
       <div class="ma-inputs grid-4">
         <input type="number" id="ma-strike" placeholder="Strike">
         <select id="ma-type"><option value="CALL">CALL</option><option value="PUT">PUT</option></select>
         <input type="number" id="ma-bid" placeholder="Bid">
         <input type="number" id="ma-ask" placeholder="Ask">
-        <input type="number" id="ma-theta" placeholder="Theta">
       </div>
-      <button class="btn-main btn-outline" style="margin-top: 8px; padding: 12px; font-size:11px;" onclick="addManualRow()">+ ADICIONAR CONTRATO</button>
+      <button class="btn-main btn-outline" style="margin-top:8px;padding:12px;font-size:11px;" onclick="addManualRow()">+ ADICIONAR CONTRATO À TABELA</button>
     </div>
 
-    <button class="btn-main btn-yellow" id="btnAnalyze" disabled>✓ Validar Mid-Prices & Gerar Tática</button>
+    <button class="btn-main btn-yellow" id="btnAnalyze" disabled>✓ Validar & Gerar Tática SNIPER</button>
     <button class="btn-main btn-outline" id="btnCancel">✖ Descartar Tudo</button>
   </div>
 
@@ -313,54 +321,72 @@
 </div>
 
 <script>
-// ─── CHAVE NOVA CHUMBADA DIRETAMENTE ───
-const userApiKey = "AIzaSyA1p3lQIBjJpuJef3QTTS9806nG0_iYpOI";
+// ─── CONFIG ───
+const CLAUDE_URL = 'https://api.anthropic.com/v1/messages';
+const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
 
-let chainFiles = []; let chartFiles = []; let selectedAsset = 'ETH'; let validatedData = null; let abortController = null;
+// ─── STATE ───
+let chainFiles = [], chartFiles = [], selectedAsset = 'ETH', validatedData = null, abortController = null;
 
-function updateClock() { const d = new Date(); document.getElementById('clock').textContent = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
+// ─── CLOCK ───
+function updateClock() {
+  const d = new Date();
+  document.getElementById('clock').textContent = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+}
 setInterval(updateClock, 1000); updateClock();
 
-// COMPRESSÃO LEVE E SEGURA
+// ─── LOADING STEPS ───
+let stepTimer = null;
+function startSteps(activeId) {
+  ['ls1','ls2','ls3','ls4','ls5'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('on','done');
+  });
+  let steps = ['ls1','ls2','ls3','ls4','ls5'];
+  let i = 0;
+  stepTimer = setInterval(() => {
+    if(i > 0) { document.getElementById(steps[i-1]).classList.remove('on'); document.getElementById(steps[i-1]).classList.add('done'); }
+    if(i < steps.length) { document.getElementById(steps[i]).classList.add('on'); i++; }
+    else clearInterval(stepTimer);
+  }, 900);
+}
+
+// ─── CANVAS PREPROCESSING ─── (corta menu/barra status, grayscale+contraste)
 async function preprocessImage(file) {
   return new Promise((resolve, reject) => {
-    const img = new Image(); const reader = new FileReader();
+    const img = new Image();
+    const reader = new FileReader();
     reader.onload = (e) => {
       img.onload = () => {
-        try {
-            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-            const cropTop = img.height * 0.05; const cropBottom = img.height * 0.05;
-            const drawHeight = img.height - cropTop - cropBottom;
-            
-            const MAX_WIDTH = 720; 
-            let scale = 1; if (img.width > MAX_WIDTH) { scale = MAX_WIDTH / img.width; }
-
-            canvas.width = img.width * scale; canvas.height = drawHeight * scale;
-            ctx.scale(scale, scale);
-            ctx.drawImage(img, 0, cropTop, img.width, drawHeight, 0, 0, img.width, drawHeight);
-            resolve(canvas.toDataURL('image/jpeg', 0.6).split(',')[1]); 
-        } catch(err) {
-            resolve(e.target.result.split(',')[1]);
-        }
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const cropTop = img.height * 0.08;    // remove 8% do topo (status bar)
+        const cropBottom = img.height * 0.10; // remove 10% da base (nav bar)
+        const drawHeight = img.height - cropTop - cropBottom;
+        canvas.width = img.width;
+        canvas.height = drawHeight;
+        ctx.filter = 'grayscale(100%) contrast(1.5) brightness(1.1)';
+        ctx.drawImage(img, 0, cropTop, img.width, drawHeight, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.9).split(',')[1]);
       };
-      img.onerror = () => reject(new Error("Erro ao ler imagem"));
+      img.onerror = reject;
       img.src = e.target.result;
     };
-    reader.onerror = () => reject(new Error("Erro de ficheiro"));
+    reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
 
+// ─── PARSE NUM ─── (robusto para números pt-BR e OCR errors)
 function parseNum(v) {
-  if (v === null || v === undefined || v === '' || v === '--') return null;
+  if (v === null || v === undefined || v === '') return null;
   if (typeof v === 'number') return Number.isFinite(v) ? v : null;
   let s = String(v).trim().replace(/[Oo]/g, '0').replace(/[^\d.,-]/g, '');
-  if (!s || s === '-' || s === '.') return null;
+  if (!s) return null;
   if (/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
   else if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g, '').replace(',', '.');
   else s = s.replace(',', '.');
-  const n = Number(s);
-  return Number.isFinite(n) ? n : null;
+  const n = Number(s); return Number.isFinite(n) ? n : null;
 }
 
 function isReasonableStrike(asset, strike) {
@@ -371,464 +397,685 @@ function isReasonableStrike(asset, strike) {
   return true;
 }
 
-function calcLocalConfidence(data) {
-  let score = 0;
-  if (Number.isFinite(data.spot_price)) score += 20;
-  if (data.expiry) score += 10;
-  if (Array.isArray(data.options)) { if (data.options.length >= 4) score += 15; if (data.options.length >= 8) score += 10; }
-  return Math.max(0, Math.min(100, score));
-}
+function cleanJSON(text) { return text.replace(/```json/gi,'').replace(/```/g,'').trim(); }
 
-// ─── V23: DIRECT LINK AO MODELO LEVE (SEM ROUTER PARA NÃO BLOQUEAR) ───
-async function fetchWithRetry(payload, timeoutMs = 30000) {
-  const modelName = "gemini-1.5-flash-8b"; // O modelo mais rápido, fiável e menos restrito
-  
-  try {
-      abortController = new AbortController();
-      const id = setTimeout(() => abortController.abort(), timeoutMs);
-      
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${userApiKey}`;
-      const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: abortController.signal });
-      clearTimeout(id);
-      
-      if (!response.ok) {
-          const errData = await response.json().catch(() => null);
-          const errMsg = errData?.error?.message || response.status.toString();
-          
-          if (response.status === 400) throw new Error(`Google API (400): A sua chave foi mal formada. Verifique o Google AI Studio.`); 
-          if (response.status === 403) throw new Error(`Google API (403): O Google bloqueou esta chave. Apague-a e crie outra como 'Novo Projeto'.`);
-          if (response.status === 404) throw new Error(`Google API (404): O modelo ${modelName} foi bloqueado para a sua conta gratuita.`);
-          if (response.status === 429) throw new Error(`Google API (429): Limite de utilização excedido.`);
-          throw new Error(`Google API Erro: ${errMsg}`);
-      }
-      return await response.json();
-      
-  } catch (e) {
-      if (e.name === 'AbortError') {
-          throw new Error("A sua internet falhou ou a IA demorou demasiado a responder (Timeout). Tente enviar apenas 1 ou 2 fotos de cada vez.");
-      } else {
-          throw e;
-      }
-  }
-}
-
-function cleanJSON(text) { 
-    let clean = text.replace(/```json/gi, '').replace(/```/g, '').trim(); 
-    const firstBrace = clean.indexOf('{');
-    const lastBrace = clean.lastIndexOf('}');
-    if(firstBrace !== -1 && lastBrace !== -1) { return clean.substring(firstBrace, lastBrace + 1); }
-    throw new Error("A IA leu a imagem mas devolveu os dados num formato ilegível. Tente novamente.");
-}
-
+// ─── FILE HANDLERS ───
 function handleFiles(files, type) {
   Array.from(files).forEach(file => {
     if (!file.type.startsWith('image/')) return;
-    if (type === 'chain') { chainFiles.push(file); renderPreview(file, chainFiles.length - 1, 'chain'); }
-    else { chartFiles.push(file); renderPreview(file, chartFiles.length - 1, 'chart'); }
+    if (type === 'chain') { chainFiles.push(file); renderPreview(file, chainFiles.length-1, 'chain'); }
+    else { chartFiles.push(file); renderPreview(file, chartFiles.length-1, 'chart'); }
   });
   checkOcrBtn();
 }
+
 function renderPreview(file, idx, type) {
   const strip = document.getElementById(type === 'chain' ? 'previewChain' : 'previewChart');
-  const thumb = document.createElement('div'); thumb.className = 'thumb'; thumb.dataset.idx = idx; thumb.dataset.type = type;
-  thumb.innerHTML = `<img src="${URL.createObjectURL(file)}"><button class="btn-remove" onclick="removeFile(${idx}, '${type}')">×</button>`;
+  const thumb = document.createElement('div');
+  thumb.className = 'thumb'; thumb.dataset.idx = idx; thumb.dataset.type = type;
+  thumb.innerHTML = `<img src="${URL.createObjectURL(file)}"><button class="btn-remove" onclick="removeFile(${idx},'${type}')">×</button>`;
   strip.appendChild(thumb);
 }
+
 function removeFile(idx, type) {
-  if(type === 'chain') chainFiles[idx] = null; else chartFiles[idx] = null;
-  document.querySelector(`.thumb[data-idx="${idx}"][data-type="${type}"]`)?.remove(); checkOcrBtn();
+  if(type==='chain') chainFiles[idx]=null; else chartFiles[idx]=null;
+  document.querySelector(`.thumb[data-idx="${idx}"][data-type="${type}"]`)?.remove();
+  checkOcrBtn();
 }
+
 function checkOcrBtn() { document.getElementById('btnOcr').disabled = chainFiles.filter(Boolean).length === 0; }
 
-document.getElementById('fileChain').addEventListener('change', e => handleFiles(e.target.files, 'chain'));
-document.getElementById('fileChart').addEventListener('change', e => handleFiles(e.target.files, 'chart'));
+document.getElementById('fileChain').addEventListener('change', e => handleFiles(e.target.files,'chain'));
+document.getElementById('fileChart').addEventListener('change', e => handleFiles(e.target.files,'chart'));
+
 document.getElementById('assetGroup').addEventListener('click', e => {
   if (!e.target.classList.contains('chip')) return;
-  document.querySelectorAll('#assetGroup .chip').forEach(c => c.classList.remove('active')); e.target.classList.add('active'); selectedAsset = e.target.dataset.asset;
+  document.querySelectorAll('#assetGroup .chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active'); selectedAsset = e.target.dataset.asset;
 });
 
-function showError(msg) {
-    const err = document.getElementById('errorBox'); 
-    err.innerHTML = `<strong>ERRO DO SISTEMA:</strong> ${msg}`; 
-    err.className = `alert alert-error active`; 
-    document.getElementById('loadingBlock').classList.remove('active'); 
-    checkOcrBtn();
-}
-function resetSystem() {
-    document.getElementById('ocrReview').classList.remove('active'); document.getElementById('result').classList.remove('active'); document.getElementById('result').innerHTML = ''; document.getElementById('errorBox').classList.remove('active'); document.getElementById('uploadPanel').style.display = 'block'; validatedData = null; if(abortController) abortController.abort();
-}
-document.getElementById('btnCancel').addEventListener('click', resetSystem);
-
-const getExtractorPrompt = (asset) => `Você é um extrator de dados de mesa proprietária. Ativo alvo: ${asset}.
-A partir das imagens, extraia a tabela com os strikes.
-Regras:
-1. Retorne APENAS um JSON válido.
-2. Extraia o Preço Spot (spot_price).
-3. Linhas: strike, type (CALL/PUT), bid, ask, delta, theta. Use null se não houver.
-Formato:
-{
-  "spot_price": null,
-  "options": [
-    { "strike": null, "type": "CALL", "bid": null, "ask": null, "delta": null, "theta": null }
-  ]
-}`;
-
-const PROMPT_ANALYST = `MESA SNIPER. DADOS: {DATA}. Ativo: {ASSET}.
-NÃO calcule custos ou lucros. O Motor JS fará isso usando execução por "Limit Order" (Preço MID). Sugira apenas as LEGS.
-Retorne APENAS um JSON válido estrito:
-{
-  "desk_bias": "BULLISH", "convexity_status": "ACTIVE", "sniper_score": 88,
-  "raio_x": { "tendencia": "txt", "volatilidade": "txt", "institucional": "txt" },
-  "riscos": [ { "titulo": "Risco", "descricao": "desc" } ],
-  "best_play_convexity": { "nome": "Bull Call Spread", "bullets": ["Motivo 1"], "legs": [ { "acao": "COMPRA", "strike": 70000, "tipo": "CALL" }, { "acao": "VENDA", "strike": 73000, "tipo": "CALL" } ], "cenario": "Romper X" },
-  "best_play_income": { "nome": "Bull Put Spread", "bullets": ["Motivo 1"], "legs": [ { "acao": "VENDA", "strike": 68000, "tipo": "PUT" }, { "acao": "COMPRA", "strike": 66000, "tipo": "PUT" } ], "cenario": "Manter suporte" },
-  "cardapio_convexity": [ { "nome": "Long Call", "resumo": "Alvo curto.", "legs": [ { "acao": "COMPRA", "strike": 71000, "tipo": "CALL" } ] } ],
-  "cardapio_income": [ { "nome": "Covered Call", "resumo": "Yield.", "legs": [ { "acao": "VENDA", "strike": 73000, "tipo": "CALL" } ] } ],
-  "conclusao": { "melhor_estrutura": "Veredito" }
-}`;
-
-window.forceManualMode = function() {
-    resetSystem(); document.getElementById('uploadPanel').style.display = 'none';
-    validatedData = { spot_price: null, expiry: null, local_confidence: 0, options: [] };
-    validatedData = auditOCRData(validatedData); document.getElementById('ocrReview').classList.add('active');
-    document.getElementById('errorBox').innerHTML = `<strong>MODO MANUAL ATIVADO.</strong>`; document.getElementById('errorBox').className = `alert alert-warn active`;
-    renderOcrReview();
-}
-window.updateSpotExpiry = function() {
-    if(!validatedData) return; let s = document.getElementById('ma-spot').value; let e = document.getElementById('ma-expiry').value;
-    validatedData.spot_price = s ? Number(s) : null; validatedData.expiry = e || null; validatedData = auditOCRData(validatedData); renderOcrReview();
-}
-window.addManualRow = function() {
-    if(!validatedData) validatedData = { options: [] };
-    let strike = document.getElementById('ma-strike').value; let type = document.getElementById('ma-type').value;
-    let bid = document.getElementById('ma-bid').value; let ask = document.getElementById('ma-ask').value;
-    let theta = document.getElementById('ma-theta').value;
-
-    if(strike && bid && ask) {
-        validatedData.options.push({ id: Math.random().toString(36).substr(2, 9), strike: Number(strike), type: type, bid: Number(bid), ask: Number(ask), theta: theta ? Number(theta) : null, delta: null });
-        document.getElementById('ma-strike').value = ''; document.getElementById('ma-bid').value = ''; document.getElementById('ma-ask').value = ''; document.getElementById('ma-theta').value = ''; document.getElementById('ma-strike').focus(); 
-        validatedData = auditOCRData(validatedData); renderOcrReview();
-    } else { alert("Preencha Strike, Bid e Ask para adicionar a linha."); }
-}
-
-// ─── PIPELINE OCR NUVEM ───
-document.getElementById('btnOcr').addEventListener('click', async () => {
-    resetSystem(); 
-    
-    const vChain = chainFiles.filter(Boolean); const vChart = chartFiles.filter(Boolean);
-    if (!vChain.length) return;
-
-    document.getElementById('uploadPanel').style.display = 'none'; 
-    document.getElementById('loadingBlock').classList.add('active');
-    
-    try {
-        let parts = [{ text: getExtractorPrompt(selectedAsset) }];
-        
-        for(let i=0; i<vChain.length; i++) { 
-            document.getElementById('loadingText').textContent = `A LER IMAGEM ${i+1}/${vChain.length}...`;
-            let cleanBase64 = await preprocessImage(vChain[i]); 
-            parts.push({ inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } }); 
-        }
-        
-        if(vChart.length > 0) { 
-            for(let i=0; i<vChart.length; i++) { 
-                document.getElementById('loadingText').textContent = `A LER GRÁFICO ${i+1}/${vChart.length}...`;
-                let cleanBase64 = await preprocessImage(vChart[i]); 
-                parts.push({ inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } }); 
-            } 
-        }
-
-        document.getElementById('loadingText').textContent = `A CONECTAR COM A NUVEM DO GOOGLE...`;
-        const payload = { contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } };
-        const result = await fetchWithRetry(payload, 30000); 
-        
-        document.getElementById('loadingText').textContent = `A DESCODIFICAR OS DADOS...`;
-        const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
-        
-        validatedData = auditOCRData(JSON.parse(cleanJSON(textResponse))); 
-        
-        if (validatedData.options.length === 0) {
-            throw new Error("A IA leu as imagens mas não conseguiu encontrar os Strikes ou Bid/Ask. Verifique a resolução do print.");
-        }
-
-        document.getElementById('loadingBlock').classList.remove('active'); document.getElementById('ocrReview').classList.add('active'); renderOcrReview();
-
-    } catch (e) {
-        showError(e.message); 
-        document.getElementById('uploadPanel').style.display = 'block'; 
-    }
+// Drag & Drop
+['dropZoneChain','dropZoneChart'].forEach(id => {
+  const el = document.getElementById(id);
+  const type = id.includes('Chain') ? 'chain' : 'chart';
+  el.addEventListener('dragover', e => { e.preventDefault(); el.style.borderColor = 'var(--accent)'; });
+  el.addEventListener('dragleave', () => { el.style.borderColor = ''; });
+  el.addEventListener('drop', e => { e.preventDefault(); el.style.borderColor = ''; handleFiles(e.dataTransfer.files, type); });
 });
 
+// ─── AUDIT OCR DATA ───
 function auditOCRData(data) {
-  if (!data) return;
+  if (!data || !Array.isArray(data.options)) throw new Error('Chain inválida — JSON malformado.');
   data.spot_price = parseNum(data.spot_price);
-  data.spot_suspicious = false;
-  
-  let rawOptions = (data.options || []).map(o => ({
-    ...o, strike: parseNum(o.strike), type: String(o.type || '').toUpperCase().includes('CALL') ? 'CALL' : 'PUT',
-    bid: parseNum(o.bid), ask: parseNum(o.ask), delta: parseNum(o.delta), theta: parseNum(o.theta), gamma: parseNum(o.gamma)
-  })).filter(o => Number.isFinite(o.strike) && Number.isFinite(o.bid) && Number.isFinite(o.ask));
 
+  let rawOptions = data.options.map(o => ({
+    strike: parseNum(o.strike),
+    type: String(o.type||'').toUpperCase().includes('PUT') ? 'PUT' : 'CALL',
+    bid: parseNum(o.bid),
+    ask: parseNum(o.ask),
+    delta: parseNum(o.delta),
+    volume: parseNum(o.volume)
+  })).filter(o => Number.isFinite(o.strike) && Number.isFinite(o.bid) && Number.isFinite(o.ask) && isReasonableStrike(selectedAsset, o.strike));
+
+  // Dedup inteligente — mantém menor spread
   const dedupMap = {};
   rawOptions.forEach(opt => {
-    opt.mid = Number(((opt.bid + opt.ask) / 2).toFixed(2)); 
     const key = `${opt.strike}_${opt.type}`;
     if (!dedupMap[key]) { dedupMap[key] = opt; return; }
     const curr = dedupMap[key];
-    if ((opt.ask - opt.bid) >= 0 && (curr.ask - curr.bid < 0 || (opt.ask - opt.bid) < (curr.ask - curr.bid))) dedupMap[key] = opt;
+    const newSpread = opt.ask - opt.bid, currSpread = curr.ask - curr.bid;
+    if (newSpread >= 0 && (currSpread < 0 || newSpread < currSpread)) dedupMap[key] = opt;
   });
 
-  data.options = Object.values(dedupMap).sort((a, b) => a.strike - b.strike).map(o => ({ ...o, id: o.id || Math.random().toString(36).slice(2, 11), suspicious: false, is_atm: false }));
-  data.local_confidence = calcLocalConfidence(data);
+  data.options = Object.values(dedupMap)
+    .sort((a,b) => a.strike - b.strike)
+    .map(o => ({ ...o, id: Math.random().toString(36).slice(2,11), suspicious: false, is_atm: false }));
 
-  let atmStrike = "N/A";
+  data.bviv = parseNum(data.bviv);
+  data.confidence = parseNum(data.confidence) || 70;
+  return calculateChainIntel(data);
+}
+
+// ─── CHAIN INTEL ───
+function calculateChainIntel(data) {
+  let suspCount = 0;
+  data.options.forEach(opt => {
+    opt.suspicious = false; opt.is_atm = false;
+    const spread = opt.ask - opt.bid;
+    if (spread < 0) { opt.suspicious = true; suspCount++; }
+    if (opt.bid > 0 && (spread / opt.bid) > 0.8) { opt.suspicious = true; suspCount++; }
+  });
+
+  let atmStrike = 'N/A'; data.spot_suspicious = false;
   if (Number.isFinite(data.spot_price) && data.options.length > 0) {
-    let strikes = data.options.map(o => o.strike);
-    if (data.spot_price < Math.min(...strikes) * 0.85 || data.spot_price > Math.max(...strikes) * 1.15) data.spot_suspicious = true;
-    else {
+    const strikes = data.options.map(o => o.strike);
+    if (data.spot_price < Math.min(...strikes)*0.85 || data.spot_price > Math.max(...strikes)*1.15) {
+      data.spot_suspicious = true;
+    } else {
       let minDiff = Infinity;
-      data.options.forEach(o => { let diff = Math.abs(o.strike - data.spot_price); if (diff < minDiff) { minDiff = diff; atmStrike = o.strike; } });
-      data.options.forEach(o => { if (o.strike === atmStrike) o.is_atm = true; });
+      data.options.forEach(o => { const d = Math.abs(o.strike - data.spot_price); if(d < minDiff){ minDiff=d; atmStrike=o.strike; } });
+      data.options.forEach(o => { if(o.strike === atmStrike) o.is_atm = true; });
     }
   }
 
-  if (data.spot_suspicious) { data.ocr_seal = "SPOT INCONSISTENTE"; data.ocr_seal_class = "seal-danger"; } 
-  else if (data.options.length === 0) { data.ocr_seal = "TABELA VAZIA"; data.ocr_seal_class = "seal-warn"; } 
-  else { data.ocr_seal = "SMART EXECUTION READY"; data.ocr_seal_class = "seal-ok"; }
-  data.atm_strike = atmStrike;
-  
+  // Sys health score
+  const total = data.options.length;
+  const liqScore = total === 0 ? 0 : Math.max(0, 100 - (suspCount/total)*100);
+  data.sys_health = Math.round(liqScore);
+
+  if (data.spot_suspicious) { data.ocr_seal='SPOT INCONSISTENTE'; data.ocr_seal_class='seal-danger'; }
+  else if (total === 0) { data.ocr_seal='TABELA VAZIA'; data.ocr_seal_class='seal-warn'; }
+  else if (suspCount > 0) { data.ocr_seal='REVISAR SPREADS'; data.ocr_seal_class='seal-warn'; }
+  else { data.ocr_seal='DADOS PRONTOS ✓'; data.ocr_seal_class='seal-ok'; }
+
+  data.susp_count = suspCount; data.atm_strike = atmStrike;
+
+  const spotEl = document.getElementById('ma-spot');
+  const exEl = document.getElementById('ma-expiry');
+  if(spotEl && data.spot_price) spotEl.value = data.spot_price;
+  if(exEl && data.expiry) exEl.value = data.expiry;
   return data;
 }
 
+// ─── RENDER OCR REVIEW ───
 function renderOcrReview() {
-    const d = validatedData; if(!d) return;
-    document.getElementById('ocrSealBadge').textContent = d.ocr_seal; document.getElementById('ocrSealBadge').className = `seal-badge ${d.ocr_seal_class}`;
-    document.getElementById('ocrSummary').innerHTML = `
-        <div class="ds-card ${d.spot_suspicious ? 'spot-alert' : ''}"><div class="ds-lbl">SPOT LIDO</div><div class="ds-val mono ${d.spot_suspicious ? 'm-danger' : ''}">$${d.spot_price || '--'}</div></div>
-        <div class="ds-card"><div class="ds-lbl">FAIXA ATM</div><div class="ds-val mono" style="color:var(--accent2)">${d.atm_strike !== 'N/A' ? '$'+d.atm_strike : '--'}</div></div>
-    `;
+  const d = validatedData; if(!d) return;
+  document.getElementById('ocrSealBadge').textContent = d.ocr_seal;
+  document.getElementById('ocrSealBadge').className = `seal-badge ${d.ocr_seal_class}`;
 
-    document.getElementById('ocrTableBody').innerHTML = d.options.map(o => `
-        <tr class="${o.suspicious ? 'suspect' : ''} ${o.is_atm ? 'atm-row' : ''}">
-            <td style="color:var(--text);font-weight:700">$${o.strike} ${o.is_atm ? '<span class="atm-badge">ATM</span>' : ''}</td>
-            <td><span class="tag ${o.type==='CALL'?'tag-c':'tag-p'}">${o.type.substring(0,1)}</span></td>
-            <td>${o.bid}</td><td>${o.ask}</td><td style="color:var(--accent); font-weight:bold;">${o.mid}</td><td style="color:var(--accent2)">${o.theta ?? '-'}</td>
-            <td style="text-align:center;"><button class="del-row-btn" onclick="deleteRow('${o.id}')">×</button></td>
-        </tr>
-    `).join('');
-    document.getElementById('btnAnalyze').disabled = d.options.length === 0;
+  const conf = d.confidence || 0;
+  const confColor = conf > 75 ? 'var(--accent)' : conf > 50 ? 'var(--warn)' : 'var(--danger)';
+  document.getElementById('ocrConfBadge').innerHTML = `
+    <span>${conf}%</span>
+    <div class="conf-bar-wrap"><div class="conf-bar-bg"><div class="conf-bar-fill" style="width:${conf}%;background:${confColor}"></div></div></div>
+  `;
+
+  document.getElementById('ocrSummary').innerHTML = `
+    <div class="ds-card ${d.spot_suspicious ? 'spot-alert' : ''}">
+      <div class="ds-lbl">SPOT LIDO</div>
+      <div class="ds-val mono ${d.spot_suspicious ? 'm-danger' : ''}">$${d.spot_price || '--'}</div>
+    </div>
+    <div class="ds-card">
+      <div class="ds-lbl">FAIXA ATM</div>
+      <div class="ds-val mono" style="color:var(--accent2)">${d.atm_strike !== 'N/A' ? '$'+d.atm_strike : '--'}</div>
+    </div>
+    <div class="ds-card">
+      <div class="ds-lbl">CONTRATOS</div>
+      <div class="ds-val mono">${d.options.length}</div>
+    </div>
+    <div class="ds-card">
+      <div class="ds-lbl">BVIV</div>
+      <div class="ds-val mono" style="color:var(--warn)">${d.bviv ? d.bviv+'%' : '--'}</div>
+    </div>
+  `;
+
+  document.getElementById('ocrTableBody').innerHTML = d.options.map(o => `
+    <tr class="${o.suspicious ? 'suspect' : ''} ${o.is_atm ? 'atm-row' : ''}">
+      <td style="color:var(--text);font-weight:700">$${o.strike}${o.is_atm ? '<span class="atm-badge">ATM</span>' : ''}</td>
+      <td><span class="tag ${o.type==='CALL'?'tag-c':'tag-p'}">${o.type[0]}</span></td>
+      <td>${o.bid ?? '-'}</td>
+      <td>${o.ask ?? '-'}</td>
+      <td>${o.delta ?? '-'}</td>
+      <td>${o.volume ?? '-'}</td>
+      <td style="text-align:center;"><button class="del-row-btn" onclick="deleteRow('${o.id}')">×</button></td>
+    </tr>
+  `).join('');
+
+  document.getElementById('btnAnalyze').disabled = d.options.length === 0;
 }
 
-document.getElementById('btnAnalyze').addEventListener('click', async () => {
-    document.getElementById('errorBox').classList.remove('active'); document.getElementById('ocrReview').style.display = 'none'; document.getElementById('loadingBlock').classList.add('active'); 
-    document.getElementById('loadingText').textContent = 'A GERAR ESTRATÉGIA DE COMBATE...';
-    const cleanData = { ...validatedData, options: validatedData.options.map(({id, suspicious, is_atm, mid, ...rest}) => rest) };
-
-    try {
-        const payload = { contents: [{ parts: [{ text: PROMPT_ANALYST.replace(/{ASSET}/g, selectedAsset).replace('{DATA}', JSON.stringify(cleanData)) }] }], generationConfig: { responseMimeType: "application/json" } };
-        const result = await fetchWithRetry(payload, 30000);
-        let analysisData = JSON.parse(cleanJSON(result.candidates[0].content.parts[0].text));
-        analysisData = executeMathEngine(analysisData, validatedData);
-        document.getElementById('loadingBlock').classList.remove('active'); renderFinalResult(analysisData);
-    } catch (e) {
-        showError(`Falha no cálculo final: ${e.message}`);
-        document.getElementById('ocrReview').style.display = 'block';
-    }
-});
-
-function executeMathEngine(aiData, ocrData) {
-    const d = { ...aiData };
-    d.asset = selectedAsset; d.spot_price = ocrData.spot_price || 'N/A'; d.expiry = ocrData.expiry || 'N/A';
-    d.spot_suspicious = ocrData.spot_suspicious;
-
-    let confScore = 100;
-    if (d.spot_suspicious) confScore -= 50; if (ocrData.options.length < 5) confScore -= 30;
-    const localConfidence = Number.isFinite(ocrData.local_confidence) ? ocrData.local_confidence : 70;
-    confScore = Math.floor((confScore + localConfidence) / 2);
-    d.sys_health = confScore; d.final_score = Math.max(0, Math.floor(((parseInt(d.sniper_score) || 80) + confScore) / 2));
-
-    const calcStructure = (strategy) => {
-        if(!strategy || !Array.isArray(strategy.legs)) return strategy;
-        let netCost = 0; let netTheta = 0; let isValid = true; let buyStrikes = []; let sellStrikes = []; let isCall = true;
-
-        strategy.legs.forEach(leg => {
-            const opt = ocrData.options.find(o => o.strike === leg.strike && o.type === leg.tipo);
-            if(opt) {
-                let px = opt.mid; 
-                leg.preco_real = px;
-                
-                if(leg.acao === 'COMPRA') { netCost += px; buyStrikes.push(leg.strike); netTheta += (opt.theta || 0); }
-                else { netCost -= px; sellStrikes.push(leg.strike); netTheta -= (opt.theta || 0); } 
-                
-                if(leg.tipo === 'PUT') isCall = false;
-            } else { leg.preco_real = null; isValid = false; }
-        });
-
-        strategy.is_valid = isValid;
-        if(isValid) {
-            let isDebit = netCost >= 0; let flowVal = Math.abs(netCost);
-            strategy.flow_type = isDebit ? "DEBIT" : "CREDIT"; strategy.flow_label = isDebit ? "Custo (Limit)" : "Crédito (Limit)"; strategy.flow_val = flowVal.toFixed(2);
-            strategy.roi_pct = "N/A"; strategy.rr_ratio = "N/A";
-            strategy.net_theta = netTheta !== 0 ? (netTheta > 0 ? `+${netTheta.toFixed(2)}/dia` : `${netTheta.toFixed(2)}/dia`) : null;
-
-            if(buyStrikes.length === 1 && sellStrikes.length === 1) { 
-                let spreadWidth = Math.abs(sellStrikes[0] - buyStrikes[0]);
-                if (isDebit) {
-                    strategy.inst_name = isCall ? "BULL CALL SPREAD" : "BEAR PUT SPREAD";
-                    strategy.max_profit = (spreadWidth - flowVal).toFixed(2); strategy.max_loss = flowVal.toFixed(2);
-                    strategy.be_calc = isCall ? (buyStrikes[0] + flowVal).toFixed(2) : (buyStrikes[0] - flowVal).toFixed(2);
-                } else {
-                    strategy.inst_name = isCall ? "BEAR CALL SPREAD" : "BULL PUT SPREAD";
-                    strategy.max_profit = flowVal.toFixed(2); strategy.max_loss = (spreadWidth - flowVal).toFixed(2);
-                    strategy.be_calc = isCall ? (sellStrikes[0] + flowVal).toFixed(2) : (sellStrikes[0] - flowVal).toFixed(2);
-                }
-            } else if (buyStrikes.length === 1 && sellStrikes.length === 0) { 
-                strategy.inst_name = isCall ? "LONG CALL" : "LONG PUT";
-                strategy.max_profit = "ILIMITADO"; strategy.max_loss = flowVal.toFixed(2);
-                strategy.be_calc = isCall ? (buyStrikes[0] + flowVal).toFixed(2) : (buyStrikes[0] - flowVal).toFixed(2);
-            } else if (buyStrikes.length === 0 && sellStrikes.length === 1) {
-                strategy.inst_name = isCall ? "COVERED CALL" : "CASH-SECURED PUT";
-                let spot = Number.isFinite(ocrData.spot_price) ? ocrData.spot_price : null;
-                if (spot) {
-                    strategy.max_profit = isCall ? ((sellStrikes[0] - spot) + flowVal).toFixed(2) : flowVal.toFixed(2);
-                    strategy.max_loss = isCall ? "SPOT" : (sellStrikes[0] - flowVal).toFixed(2);
-                    strategy.be_calc = isCall ? (spot - flowVal).toFixed(2) : (sellStrikes[0] - flowVal).toFixed(2);
-                    strategy.roi_pct = ((flowVal / spot) * 100).toFixed(2) + "%";
-                } else {
-                    strategy.max_profit = flowVal.toFixed(2); strategy.max_loss = "∞"; strategy.be_calc = "--";
-                }
-            } else { strategy.inst_name = "COMPLEXA"; strategy.max_profit = "VAR"; strategy.max_loss = "VAR"; strategy.be_calc = "VAR"; }
-
-            if (strategy.roi_pct === "N/A" && strategy.max_loss > 0 && strategy.max_profit !== "ILIMITADO" && strategy.max_profit !== "VAR") {
-                strategy.rr_ratio = `1 : ${(strategy.max_profit / strategy.max_loss).toFixed(2)}`;
-                strategy.roi_pct = `+${((strategy.max_profit / strategy.max_loss) * 100).toFixed(1)}%`;
-            } else if (strategy.max_profit === "ILIMITADO") { strategy.rr_ratio = `1 : ∞`; strategy.roi_pct = "∞"; }
-        }
-        return strategy;
-    };
-
-    if(Array.isArray(d.cardapio_convexity)) d.cardapio_convexity = d.cardapio_convexity.map(calcStructure);
-    if(Array.isArray(d.cardapio_income)) d.cardapio_income = d.cardapio_income.map(calcStructure);
-    if(d.best_play_convexity) d.best_play_convexity = calcStructure(d.best_play_convexity);
-    if(d.best_play_income) d.best_play_income = calcStructure(d.best_play_income);
-    return d;
-}
-
-window.switchTab = function(tabName) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'tab-conv', 'tab-inc'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    if(tabName === 'convexity') {
-        document.getElementById('btnTabConv').classList.add('active', 'tab-conv'); document.getElementById('tabConvexity').classList.add('active');
-    } else {
-        document.getElementById('btnTabInc').classList.add('active', 'tab-inc'); document.getElementById('tabIncome').classList.add('active');
-    }
+window.deleteRow = function(id) {
+  if(!validatedData) return;
+  validatedData.options = validatedData.options.filter(o => o.id !== id);
+  validatedData = calculateChainIntel(validatedData);
+  renderOcrReview();
 };
 
+// ─── MANUAL MODE ───
+window.forceManualMode = function() {
+  resetSystem();
+  document.getElementById('uploadPanel').style.display = 'none';
+  validatedData = { spot_price: null, expiry: null, bviv: null, confidence: 0, options: [] };
+  validatedData = calculateChainIntel(validatedData);
+  document.getElementById('ocrReview').classList.add('active');
+  showError('Modo Manual Ativado. Adicione o Spot, Vencimento e os contratos abaixo.', true);
+  renderOcrReview();
+};
+
+window.updateSpotExpiry = function() {
+  if(!validatedData) return;
+  const s = document.getElementById('ma-spot').value;
+  const e = document.getElementById('ma-expiry').value;
+  validatedData.spot_price = s ? Number(s) : null;
+  validatedData.expiry = e || null;
+  validatedData = calculateChainIntel(validatedData);
+  renderOcrReview();
+};
+
+window.addManualRow = function() {
+  if(!validatedData) validatedData = { options: [] };
+  const strike = document.getElementById('ma-strike').value;
+  const type   = document.getElementById('ma-type').value;
+  const bid    = document.getElementById('ma-bid').value;
+  const ask    = document.getElementById('ma-ask').value;
+  if (strike && bid && ask) {
+    validatedData.options.push({ id: Math.random().toString(36).substr(2,9), strike: Number(strike), type, bid: Number(bid), ask: Number(ask), delta: null, volume: null, suspicious: false, is_atm: false });
+    ['ma-strike','ma-bid','ma-ask'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('ma-strike').focus();
+    validatedData = calculateChainIntel(validatedData);
+    renderOcrReview();
+  } else { showError('Preencha Strike, Bid e Ask para adicionar.', true); }
+};
+
+function showError(msg, isFallback = false) {
+  const err = document.getElementById('errorBox');
+  err.innerHTML = `<strong>${isFallback ? 'INFO' : 'ERRO'}:</strong> ${msg}`;
+  err.className = `alert ${isFallback ? 'alert-warn' : 'alert-error'} active`;
+  document.getElementById('loadingBlock').classList.remove('active');
+  checkOcrBtn();
+}
+
+function resetSystem() {
+  document.getElementById('ocrReview').classList.remove('active');
+  const res = document.getElementById('result');
+  res.classList.remove('active'); res.innerHTML = '';
+  document.getElementById('errorBox').classList.remove('active');
+  document.getElementById('uploadPanel').style.display = 'block';
+  validatedData = null;
+  if(abortController) abortController.abort();
+}
+document.getElementById('btnCancel').addEventListener('click', resetSystem);
+
+// ─── CLAUDE OCR PROMPT ───
+const getExtractorPrompt = (asset) => `Você é um OCR quantitativo especializado em options chains da Binance.
+As imagens foram pré-processadas (grayscale + contraste). O ativo alvo é: ${asset}.
+
+REGRAS ABSOLUTAS:
+- Extraia APENAS números claramente visíveis. Nunca deduza ou invente dados.
+- Ignore completamente: ícones, barra de status, menus de navegação, textos de UI, logos.
+- Foque em: tabelas de opções com colunas de Strike, Bid, Ask, Delta, Volume, IV%.
+- Para o Spot Price: leia o preço exibido no topo próximo ao par de moeda.
+- Para BVIV: leia o índice de volatilidade se visível.
+- Confidence: sua auto-avaliação de 0 a 100 sobre a qualidade da leitura.
+
+Retorne APENAS este JSON exato (sem markdown, sem texto extra):
+{
+  "spot_price": null,
+  "expiry": null,
+  "bviv": null,
+  "confidence": null,
+  "options": [
+    { "strike": null, "type": "CALL", "bid": null, "ask": null, "delta": null, "volume": null }
+  ]
+}`;
+
+// ─── ANALYST PROMPT ───
+const getAnalystPrompt = (asset, data) => `Você é a MESA SNIPER INSTITUCIONAL de derivativos de criptomoedas.
+
+DADOS OCR AUDITADOS:
+${JSON.stringify(data)}
+
+ATIVO: ${asset}
+
+SUA MISSÃO: Analise a option chain e crie duas estruturas táticas independentes.
+
+REGRAS:
+- NUNCA sugira venda descoberta ou risco infinito
+- Capital pequeno: priorize payoff assimétrico
+- Use os strikes e preços EXATOS dos dados fornecidos
+- O Math Engine calculará ROI/RR automaticamente; você só precisa indicar os legs
+
+Retorne APENAS este JSON (sem markdown):
+{
+  "sniper_score": 75,
+  "desk_bias": "BULLISH",
+  "raio_x": {
+    "tendencia": "texto conciso sobre tendência estrutural",
+    "volatilidade": "texto sobre leitura de IV/BVIV",
+    "institucional": "texto sobre fluxo e volume anômalo detectado"
+  },
+  "riscos": [
+    { "titulo": "Nome do risco", "descricao": "descrição clara e acionável" }
+  ],
+  "best_play_convexity": {
+    "nome": "Nome da estratégia",
+    "bullets": ["razão 1", "razão 2", "razão 3"],
+    "legs": [
+      { "acao": "COMPRA", "strike": 2050, "tipo": "CALL" },
+      { "acao": "VENDA", "strike": 2200, "tipo": "CALL" }
+    ]
+  },
+  "cardapio_convexity": [
+    {
+      "nome": "Nome alternativa 1",
+      "legs": [{ "acao": "COMPRA", "strike": 2150, "tipo": "CALL" }]
+    }
+  ],
+  "best_play_income": {
+    "nome": "Nome da estratégia de renda",
+    "bullets": ["razão 1", "razão 2"],
+    "legs": [
+      { "acao": "VENDA", "strike": 2200, "tipo": "CALL" }
+    ]
+  },
+  "cardapio_income": [
+    {
+      "nome": "Alternativa de renda 1",
+      "legs": [{ "acao": "VENDA", "strike": 2100, "tipo": "CALL" }]
+    }
+  ],
+  "conclusao": {
+    "melhor_estrutura": "resumo da melhor estrutura e por quê",
+    "cenario_necessario": "o que precisa acontecer para lucrar",
+    "alternativa_defensiva": "estratégia defensiva caso o cenário falhe"
+  }
+}`;
+
+// ─── CLAUDE API CALL ───
+async function callClaude(messages, maxTokens = 2000) {
+  const response = await fetch(CLAUDE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: CLAUDE_MODEL,
+      max_tokens: maxTokens,
+      messages: messages
+    })
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(`Claude API ${response.status}: ${err.error?.message || response.statusText}`);
+  }
+  const data = await response.json();
+  return data.content.map(b => b.text || '').join('');
+}
+
+// ─── OCR PIPELINE ───
+document.getElementById('btnOcr').addEventListener('click', async () => {
+  resetSystem();
+  const vChain = chainFiles.filter(Boolean);
+  const vChart = chartFiles.filter(Boolean);
+  if (!vChain.length) return;
+
+  document.getElementById('uploadPanel').style.display = 'none';
+  document.getElementById('loadingBlock').classList.add('active');
+  document.getElementById('loadingText').textContent = 'PROCESSANDO...';
+  startSteps();
+
+  try {
+    // Step 1: Canvas preprocessing
+    const chainBase64 = await Promise.all(vChain.map(preprocessImage));
+    const chartBase64 = vChart.length ? await Promise.all(vChart.map(preprocessImage)) : [];
+
+    // Step 2: Claude OCR
+    const imageContents = [
+      ...chainBase64.map(b64 => ({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:b64 } })),
+      ...chartBase64.map(b64 => ({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:b64 } })),
+      { type:'text', text: getExtractorPrompt(selectedAsset) }
+    ];
+
+    const ocrRaw = await callClaude([{ role:'user', content: imageContents }], 1500);
+    const ocrParsed = JSON.parse(cleanJSON(ocrRaw));
+
+    // Step 3-4: Audit + Intel
+    validatedData = auditOCRData(ocrParsed);
+
+    document.getElementById('loadingBlock').classList.remove('active');
+    document.getElementById('ocrReview').classList.add('active');
+    renderOcrReview();
+
+  } catch(e) {
+    showError(`Falha no OCR: ${e.message}. Use o Modo Manual para inserir os dados.`);
+    document.getElementById('uploadPanel').style.display = 'block';
+  }
+});
+
+// ─── ANALYSIS PIPELINE ───
+document.getElementById('btnAnalyze').addEventListener('click', async () => {
+  document.getElementById('errorBox').classList.remove('active');
+  document.getElementById('ocrReview').style.display = 'none';
+  document.getElementById('loadingBlock').classList.add('active');
+  document.getElementById('loadingText').textContent = 'CALCULANDO CONVEXIDADE...';
+  startSteps();
+
+  const cleanData = {
+    ...validatedData,
+    options: validatedData.options.map(({id, suspicious, is_atm, ...rest}) => rest)
+  };
+
+  try {
+    const analysisRaw = await callClaude([{
+      role: 'user',
+      content: getAnalystPrompt(selectedAsset, cleanData)
+    }], 2000);
+
+    let analysisData = JSON.parse(cleanJSON(analysisRaw));
+    analysisData = executeMathEngine(analysisData, validatedData);
+
+    document.getElementById('loadingBlock').classList.remove('active');
+    renderFinalResult(analysisData);
+
+  } catch(e) {
+    showError(`Análise falhou: ${e.message}. Usando Motor Offline.`, true);
+    let fallbackData = executeMathEngine(buildLocalFallback(validatedData), validatedData);
+    document.getElementById('loadingBlock').classList.remove('active');
+    renderFinalResult(fallbackData);
+  }
+});
+
+// ─── MATH ENGINE ─── (calcula ROI, RR, BE, instrumentos a partir dos legs)
+function executeMathEngine(aiData, ocrData) {
+  const d = { ...aiData };
+  d.asset = selectedAsset;
+  d.spot_price = ocrData.spot_price || 'N/A';
+  d.expiry = ocrData.expiry || 'N/A';
+  d.bviv = ocrData.bviv || null;
+  d.sys_health = ocrData.sys_health || 70;
+  d.spot_suspicious = ocrData.spot_suspicious || false;
+
+  const calcStructure = (strategy) => {
+    if (!strategy || !Array.isArray(strategy.legs)) return strategy;
+    let netCost = 0, isValid = true, buyStrikes = [], sellStrikes = [], isCall = true;
+
+    strategy.legs.forEach(leg => {
+      const opt = ocrData.options.find(o => o.strike === leg.strike && o.type === leg.tipo);
+      if (opt) {
+        let px = leg.acao === 'COMPRA' ? (opt.ask ?? opt.bid) : (opt.bid ?? opt.ask);
+        leg.preco_real = px != null ? Number(px).toFixed(2) : '?';
+        const pxNum = Number(px);
+        if (leg.acao === 'COMPRA') { netCost += pxNum; buyStrikes.push(leg.strike); }
+        else { netCost -= pxNum; sellStrikes.push(leg.strike); }
+        if (leg.tipo === 'PUT') isCall = false;
+      } else { leg.preco_real = '?'; isValid = false; }
+    });
+
+    strategy.is_valid = isValid;
+    if (isValid) {
+      const isDebit = netCost >= 0, flowVal = Math.abs(netCost);
+      strategy.flow_type = isDebit ? 'DEBIT' : 'CREDIT';
+      strategy.flow_label = isDebit ? 'Custo Máx' : 'Crédito Líquido';
+      strategy.flow_val = flowVal.toFixed(2);
+      strategy.roi_pct = 'N/A'; strategy.rr_ratio = 'N/A';
+
+      // Classify instrument
+      if (buyStrikes.length === 1 && sellStrikes.length === 1) {
+        const spreadWidth = Math.abs(sellStrikes[0] - buyStrikes[0]);
+        if (isDebit) {
+          strategy.inst_name = isCall ? 'BULL CALL SPREAD' : 'BEAR PUT SPREAD';
+          strategy.max_profit = (spreadWidth - flowVal).toFixed(2);
+          strategy.max_loss   = flowVal.toFixed(2);
+          strategy.be_calc    = isCall ? (buyStrikes[0]+flowVal).toFixed(2) : (buyStrikes[0]-flowVal).toFixed(2);
+        } else {
+          strategy.inst_name = isCall ? 'BEAR CALL SPREAD' : 'BULL PUT SPREAD';
+          strategy.max_profit = flowVal.toFixed(2);
+          strategy.max_loss   = (spreadWidth - flowVal).toFixed(2);
+          strategy.be_calc    = isCall ? (sellStrikes[0]+flowVal).toFixed(2) : (sellStrikes[0]-flowVal).toFixed(2);
+        }
+      } else if (buyStrikes.length === 1 && sellStrikes.length === 0) {
+        strategy.inst_name  = isCall ? 'LONG CALL' : 'LONG PUT';
+        strategy.max_profit = 'ILIMITADO';
+        strategy.max_loss   = flowVal.toFixed(2);
+        strategy.be_calc    = isCall ? (buyStrikes[0]+flowVal).toFixed(2) : (buyStrikes[0]-flowVal).toFixed(2);
+      } else if (buyStrikes.length === 0 && sellStrikes.length === 1) {
+        strategy.inst_name = isCall ? 'COVERED CALL' : 'CASH-SECURED PUT';
+        const spot = Number.isFinite(ocrData.spot_price) ? ocrData.spot_price : null;
+        if (spot) {
+          strategy.max_profit = isCall ? ((sellStrikes[0]-spot)+flowVal).toFixed(2) : flowVal.toFixed(2);
+          strategy.max_loss   = isCall ? 'SPOT' : (sellStrikes[0]-flowVal).toFixed(2);
+          strategy.be_calc    = isCall ? (spot-flowVal).toFixed(2) : (sellStrikes[0]-flowVal).toFixed(2);
+          strategy.roi_pct    = ((flowVal/spot)*100).toFixed(2)+'%';
+        } else { strategy.max_profit=flowVal.toFixed(2); strategy.max_loss='∞'; strategy.be_calc='--'; }
+      } else if (buyStrikes.length >= 2) {
+        strategy.inst_name  = isCall ? 'LONG CALLS (WING)' : 'LONG PUTS (WING)';
+        strategy.max_profit = 'ILIMITADO';
+        strategy.max_loss   = flowVal.toFixed(2);
+        strategy.be_calc    = 'VAR';
+      } else { strategy.inst_name='COMPLEXA'; strategy.max_profit='VAR'; strategy.max_loss='VAR'; strategy.be_calc='VAR'; }
+
+      // ROI & RR
+      const mlNum = Number(strategy.max_loss), mpNum = Number(strategy.max_profit);
+      if (strategy.roi_pct === 'N/A' && mlNum > 0 && !isNaN(mpNum) && strategy.max_profit !== 'ILIMITADO') {
+        strategy.rr_ratio = `1 : ${(mpNum/mlNum).toFixed(2)}`;
+        strategy.roi_pct  = `+${((mpNum/mlNum)*100).toFixed(1)}%`;
+      } else if (strategy.max_profit === 'ILIMITADO') { strategy.rr_ratio='1 : ∞'; strategy.roi_pct='∞'; }
+    }
+    return strategy;
+  };
+
+  if(Array.isArray(d.cardapio_convexity)) d.cardapio_convexity = d.cardapio_convexity.map(calcStructure);
+  if(Array.isArray(d.cardapio_income))    d.cardapio_income    = d.cardapio_income.map(calcStructure);
+  if(d.best_play_convexity) d.best_play_convexity = calcStructure(d.best_play_convexity);
+  if(d.best_play_income)    d.best_play_income    = calcStructure(d.best_play_income);
+  return d;
+}
+
+// ─── LOCAL FALLBACK ───
+function buildLocalFallback(ocrData) {
+  const atm  = ocrData.atm_strike !== 'N/A' ? Number(ocrData.atm_strike) : null;
+  const spot = Number.isFinite(ocrData.spot_price) ? ocrData.spot_price : null;
+  let bias = 'NEUTRAL';
+  if (spot && atm) bias = spot >= atm ? 'BULLISH' : 'BEARISH';
+  let cMenu=[], iMenu=[], cBest=null, iBest=null;
+
+  if (bias === 'BULLISH' && atm) {
+    const callBuy  = ocrData.options.find(o => o.type==='CALL' && o.strike===atm);
+    const callSell = ocrData.options.find(o => o.type==='CALL' && o.strike>atm);
+    const putSell  = ocrData.options.find(o => o.type==='PUT'  && o.strike===atm);
+    if(callBuy) cMenu.push({ nome:'Long Call ATM', legs:[{acao:'COMPRA',strike:callBuy.strike,tipo:'CALL'}] });
+    if(callBuy && callSell) cBest={ nome:'Bull Call Spread', bullets:['Motor Offline — Sem IA'], legs:[{acao:'COMPRA',strike:callBuy.strike,tipo:'CALL'},{acao:'VENDA',strike:callSell.strike,tipo:'CALL'}] };
+    if(callSell) iMenu.push({ nome:'Covered Call', legs:[{acao:'VENDA',strike:callSell.strike,tipo:'CALL'}] });
+    if(putSell)  iBest={ nome:'Short Put', bullets:['Prêmio — Motor Offline'], legs:[{acao:'VENDA',strike:putSell.strike,tipo:'PUT'}] };
+  } else if (bias === 'BEARISH' && atm) {
+    const putBuy  = ocrData.options.find(o => o.type==='PUT' && o.strike===atm);
+    const putSell = ocrData.options.find(o => o.type==='PUT' && o.strike<atm);
+    if(putBuy) cMenu.push({ nome:'Long Put ATM', legs:[{acao:'COMPRA',strike:putBuy.strike,tipo:'PUT'}] });
+    if(putBuy && putSell) cBest={ nome:'Bear Put Spread', bullets:['Motor Offline'], legs:[{acao:'COMPRA',strike:putBuy.strike,tipo:'PUT'},{acao:'VENDA',strike:putSell.strike,tipo:'PUT'}] };
+  }
+
+  if(!cBest) cBest={ nome:'Dados Insuficientes', bullets:['Adicione mais strikes no modo manual.'], legs:[] };
+  if(!iBest) iBest={ nome:'Dados Insuficientes', bullets:['Adicione mais strikes.'], legs:[] };
+
+  return { desk_bias:bias, sniper_score:50, raio_x:{ tendencia:'Motor Offline', volatilidade:'N/A', institucional:'N/A' }, riscos:[{titulo:'Motor Offline',descricao:'Análise calculada localmente sem IA.'}], cardapio_convexity:cMenu, cardapio_income:iMenu, best_play_convexity:cBest, best_play_income:iBest, conclusao:{melhor_estrutura:'Modo Local.',cenario_necessario:'--',alternativa_defensiva:'--'} };
+}
+
+// ─── TAB SWITCH ───
+window.switchTab = function(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active','tab-conv','tab-inc'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  if (tabName === 'convexity') {
+    document.getElementById('btnTabConv').classList.add('active','tab-conv');
+    document.getElementById('tabConvexity').classList.add('active');
+  } else {
+    document.getElementById('btnTabInc').classList.add('active','tab-inc');
+    document.getElementById('tabIncome').classList.add('active');
+  }
+};
+
+// ─── RENDER FINAL RESULT ───
 function renderFinalResult(d) {
-  let isHalted = d.spot_suspicious || d.options?.length === 0;
-  
+  const isHalted = d.spot_suspicious || d.sys_health < 30;
+  const healthColor = d.sys_health >= 70 ? 'var(--accent)' : d.sys_health >= 40 ? 'var(--warn)' : 'var(--danger)';
+
   let html = `
     <div class="hero-dash">
-      <div class="sys-health-bar"><div class="sys-health-fill" style="width: ${d.sys_health}%; background: ${d.sys_health > 70 ? 'var(--accent)' : (d.sys_health > 40 ? 'var(--warn)' : 'var(--danger)')}"></div></div>
+      <div class="sys-health-bar"><div class="sys-health-fill" style="width:${d.sys_health||70}%;background:${healthColor}"></div></div>
       <div class="hero-header">
-        <div><div class="h-asset">${d.asset}</div><div class="h-meta mono ${d.spot_suspicious ? 'm-danger' : ''}">SPOT $${d.spot_price} &nbsp;·&nbsp; VENC ${d.expiry}</div></div>
-        <div><div class="h-score-val mono">${d.sniper_score||'--'}</div><div class="h-score-lbl">SYS SCORE</div></div>
+        <div>
+          <div class="h-asset">${d.asset}</div>
+          <div class="h-meta mono ${d.spot_suspicious ? 'm-danger' : ''}">SPOT $${d.spot_price} &nbsp;·&nbsp; VENC ${d.expiry}${d.bviv ? ' &nbsp;·&nbsp; BVIV '+d.bviv+'%' : ''}</div>
+        </div>
+        <div>
+          <div class="h-score-val mono">${d.sniper_score||'--'}</div>
+          <div class="h-score-lbl">SYS SCORE</div>
+        </div>
+      </div>
+      <div class="hero-data">
+        <div class="h-data-item"><div class="h-d-lbl">BIAS</div><div class="h-d-val" style="color:${d.desk_bias==='BULLISH'?'var(--accent)':d.desk_bias==='BEARISH'?'var(--danger)':'var(--text2)'}">${d.desk_bias||'N/A'}</div></div>
+        <div class="h-data-item"><div class="h-d-lbl">TENDÊNCIA</div><div class="h-d-val">${d.raio_x?.tendencia?.substring(0,40)||'--'}...</div></div>
+        <div class="h-data-item"><div class="h-d-lbl">SYS HEALTH</div><div class="h-d-val" style="color:${healthColor}">${d.sys_health||'--'}%</div></div>
       </div>
     </div>`;
 
   if (isHalted) {
-      html += `<div class="kill-switch"><div class="ks-icon">🛑</div><div class="ks-title">SYSTEM HALT</div><div class="ks-desc">Spot inconsistente ou Book vazio.</div></div>`;
+    html += `<div class="kill-switch"><div class="ks-icon">🛑</div><div class="ks-title">SYSTEM HALT</div><div class="ks-desc">Spot inconsistente ou book vazio. Corrija os dados no modo manual e tente novamente.</div></div>`;
   } else {
-      html += `<div class="tabs-container"><button id="btnTabConv" class="tab-btn active tab-conv" onclick="switchTab('convexity')">⚡ CONVEXITY</button><button id="btnTabInc" class="tab-btn" onclick="switchTab('income')">💰 INCOME (YIELD)</button></div>`;
+    // INTEL GRID
+    html += `
+      <div class="intel-grid">
+        <div class="intel-box"><div class="intel-lbl">📊 Volatilidade</div><div class="intel-val">${d.raio_x?.volatilidade?.substring(0,50)||'--'}...</div></div>
+        <div class="intel-box"><div class="intel-lbl">🦈 Institucional</div><div class="intel-val">${d.raio_x?.institucional?.substring(0,50)||'--'}...</div></div>
+      </div>`;
 
-      // --- TAB CONVEXITY ---
-      html += `<div id="tabConvexity" class="tab-content active">`;
-      if (d.best_play_convexity && d.best_play_convexity.legs.length > 0) {
-          const s = d.best_play_convexity;
-          html += `
-            <div class="sniper-wrapper sn-conv">
-              <div class="sniper-op">
-                <div class="sn-badge badge-conv">BEST PLAY (DIRECTIONAL)</div>
-                <div class="sn-title">${s.nome}</div><div class="sn-inst mono">${s.inst_name}</div>
-                ${s.net_theta ? `<div class="badge-greeks mono">NET THETA: ${s.net_theta}</div>` : ''}
-                ${s.bullets && s.bullets.length > 0 ? `<ul class="sn-bullets bullet-conv" style="margin-top:16px;">${s.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ``}
-                <div class="sn-legs">${s.legs.map(l => `<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><div style="position:relative;"><span class="limit-tag">LIMIT</span><span class="l-price-audited mono">$${l.preco_real}</span></div></div>`).join('')}</div>
-                <div class="metrics-grid">
-                    <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">$${s.max_loss}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Lucro Máx</div><div class="m-val mono" style="color:var(--accent)">$${s.max_profit}</div></div>
-                    <div class="m-cell"><div class="m-lbl">B.E.</div><div class="m-val mono">$${s.be_calc}</div></div>
-                    <div class="m-cell"><div class="m-lbl">R:R</div><div class="m-val mono" style="color:var(--accent2)">${s.rr_ratio}</div></div>
-                    <div class="m-cell"><div class="m-lbl">ROI %</div><div class="m-val mono"><span class="badge-roi">${s.roi_pct}</span></div></div>
-                </div>
-              </div>
-            </div>`;
-      }
-      if (d.cardapio_convexity && d.cardapio_convexity.length > 0) {
-          html += `<div class="block-title" style="margin-top:24px;">TACTICAL MENU</div><div class="tac-grid">`;
-          d.cardapio_convexity.forEach(s => {
-              html += `<div class="tac-card ${!s.is_valid ? 't-err' : (s.flow_type==='CREDIT' ? 't-spr' : 't-dir')}">
-                  <div class="t-head"><div><div class="t-type" style="color:var(--accent2)">TACTIC</div><div class="t-name">${s.nome}</div></div></div>
-                  <div class="sn-legs" style="background:transparent; padding:0; border:none; margin-bottom:16px;">${s.legs.map(l => `<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><div style="position:relative;"><span class="limit-tag">LIMIT</span><span class="l-price-audited mono">$${l.preco_real}</span></div></div>`).join('')}</div>
-                  ${s.net_theta ? `<div class="badge-greeks mono" style="margin-bottom:12px;">NET THETA: ${s.net_theta}</div>` : ''}
-                  <div class="metrics-grid">
-                    <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">$${s.max_loss}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Lucro Máx</div><div class="m-val mono" style="color:var(--accent)">$${s.max_profit}</div></div>
-                  </div>
-                </div>`;
-          });
-          html += `</div>`;
-      }
-      html += `</div>`; 
+    // RISKS
+    if (d.riscos?.length) {
+      html += `<div class="block-title">⚠ RISCOS OCULTOS</div>`;
+      d.riscos.forEach(r => {
+        html += `<div class="risk-box"><div class="r-title">${r.titulo}</div><div class="r-desc">${r.descricao}</div></div>`;
+      });
+    }
 
-      // --- TAB INCOME ---
-      html += `<div id="tabIncome" class="tab-content">`;
-      if (d.best_play_income && d.best_play_income.legs.length > 0) {
-          const s = d.best_play_income;
-          html += `
-            <div class="sniper-wrapper sn-inc">
-              <div class="sniper-op">
-                <div class="sn-badge badge-inc">BEST PLAY (INCOME)</div>
-                <div class="sn-title">${s.nome}</div><div class="sn-inst mono">${s.inst_name}</div>
-                ${s.net_theta ? `<div class="badge-greeks mono" style="border-color:var(--warn); color:var(--warn);">NET THETA: ${s.net_theta}</div>` : ''}
-                ${s.bullets && s.bullets.length > 0 ? `<ul class="sn-bullets bullet-inc" style="margin-top:16px;">${s.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ``}
-                <div class="sn-legs">${s.legs.map(l => `<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><div style="position:relative;"><span class="limit-tag">LIMIT</span><span class="l-price-audited mono">$${l.preco_real}</span></div></div>`).join('')}</div>
-                <div class="metrics-grid">
-                    <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">${s.max_loss === 'ATIVO SPOT' ? 'SPOT' : '$'+s.max_loss}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Lucro Máx</div><div class="m-val mono" style="color:var(--accent)">$${s.max_profit}</div></div>
-                    <div class="m-cell"><div class="m-lbl">B.E.</div><div class="m-val mono">$${s.be_calc}</div></div>
-                    <div class="m-cell"><div class="m-lbl">R:R</div><div class="m-val mono" style="color:var(--accent2)">${s.rr_ratio}</div></div>
-                    <div class="m-cell"><div class="m-lbl">${s.inst_name.includes('COVERED') ? 'YIELD %' : 'ROI %'}</div><div class="m-val mono"><span class="badge-yield">${s.roi_pct}</span></div></div>
-                </div>
-              </div>
-            </div>`;
-      }
-      if (d.cardapio_income && d.cardapio_income.length > 0) {
-          html += `<div class="block-title" style="margin-top:24px;">TACTICAL MENU</div><div class="tac-grid">`;
-          d.cardapio_income.forEach(s => {
-              let isCovered = s.inst_name && s.inst_name.includes('COVERED');
-              html += `<div class="tac-card ${!s.is_valid ? 't-err' : 't-hdg'}">
-                  <div class="t-head"><div><div class="t-type" style="color:var(--warn)">TACTIC</div><div class="t-name">${s.nome}</div></div></div>
-                  <div class="sn-legs" style="background:transparent; padding:0; border:none; margin-bottom:16px;">${s.legs.map(l => `<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><div style="position:relative;"><span class="limit-tag">LIMIT</span><span class="l-price-audited mono">$${l.preco_real}</span></div></div>`).join('')}</div>
-                  ${s.net_theta ? `<div class="badge-greeks mono" style="border-color:var(--warn); color:var(--warn); margin-bottom:12px;">NET THETA: ${s.net_theta}</div>` : ''}
-                  <div class="metrics-grid">
-                    <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
-                    <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">${s.max_loss === 'ATIVO SPOT' ? 'SPOT' : '$'+s.max_loss}</div></div>
-                    <div class="m-cell"><div class="m-lbl">${isCovered ? 'YIELD %' : 'ROI %'}</div><div class="m-val mono"><span class="badge-yield">${s.roi_pct}</span></div></div>
-                  </div>
-                </div>`;
-          });
-          html += `</div>`;
-      }
-      html += `</div>`; 
+    // TABS
+    html += `<div class="tabs-container">
+      <button id="btnTabConv" class="tab-btn active tab-conv" onclick="switchTab('convexity')">⚡ CONVEXITY</button>
+      <button id="btnTabInc" class="tab-btn" onclick="switchTab('income')">💰 INCOME (YIELD)</button>
+    </div>`;
+
+    // ─ TAB CONVEXITY ─
+    html += `<div id="tabConvexity" class="tab-content active">`;
+    const renderPlay = (s, isConv) => {
+      if (!s || !s.legs?.length) return '';
+      return `
+        <div class="sniper-wrapper ${isConv?'sn-conv':'sn-inc'}">
+          <div class="sniper-op">
+            <div class="sn-badge ${isConv?'badge-conv':'badge-inc'}">${isConv?'⚡ BEST PLAY (DIRECTIONAL)':'💰 BEST PLAY (INCOME)'}</div>
+            <div class="sn-title">${s.nome}</div>
+            <div class="sn-inst">${s.inst_name||''}</div>
+            ${s.bullets?.length ? `<ul class="sn-bullets ${isConv?'bullet-conv':'bullet-inc'}">${s.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>` : ''}
+            <div class="sn-legs">
+              ${s.legs.map(l=>`
+                <div class="leg-row">
+                  <span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span>
+                  <span class="l-asset mono">${l.tipo} $${l.strike}</span>
+                  <span class="l-price-audited mono">${l.preco_real != null ? '$'+l.preco_real : '?'}</span>
+                </div>`).join('')}
+            </div>
+            ${s.is_valid ? `
+              <div class="metrics-grid">
+                <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
+                <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">${s.max_loss==='SPOT'?'SPOT':'$'+s.max_loss}</div></div>
+                <div class="m-cell"><div class="m-lbl">Lucro Máx</div><div class="m-val mono" style="color:var(--accent)">$${s.max_profit}</div></div>
+                <div class="m-cell"><div class="m-lbl">B.E.</div><div class="m-val mono">$${s.be_calc}</div></div>
+                <div class="m-cell"><div class="m-lbl">R:R</div><div class="m-val mono" style="color:var(--accent2)">${s.rr_ratio}</div></div>
+                <div class="m-cell"><div class="m-lbl">ROI</div><div class="m-val mono"><span class="${isConv?'badge-roi':'badge-yield'}">${s.roi_pct}</span></div></div>
+              </div>` : '<div class="risk-box" style="margin-top:12px;"><div class="r-desc">⚠ Strike não encontrado na chain. Corrija no modo manual.</div></div>'}
+          </div>
+        </div>`;
+    };
+
+    html += renderPlay(d.best_play_convexity, true);
+
+    if (d.cardapio_convexity?.length) {
+      html += `<div class="block-title">TACTICAL MENU</div><div class="tac-grid">`;
+      d.cardapio_convexity.forEach(s => {
+        html += `<div class="tac-card ${!s.is_valid?'t-err':s.flow_type==='CREDIT'?'t-spr':'t-dir'}">
+          <div class="t-head"><div><div class="t-type" style="color:var(--accent2)">TACTIC</div><div class="t-name">${s.nome}</div></div></div>
+          <div class="sn-legs" style="background:transparent;padding:0;border:none;margin-bottom:16px;">
+            ${s.legs.map(l=>`<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><span class="l-price-audited mono">${l.preco_real!=null?'$'+l.preco_real:'?'}</span></div>`).join('')}
+          </div>
+          ${s.is_valid ? `<div class="metrics-grid">
+            <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
+            <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">$${s.max_loss}</div></div>
+            <div class="m-cell"><div class="m-lbl">Lucro Máx</div><div class="m-val mono" style="color:var(--accent)">$${s.max_profit}</div></div>
+          </div>` : ''}
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`; // end tabConvexity
+
+    // ─ TAB INCOME ─
+    html += `<div id="tabIncome" class="tab-content">`;
+    html += renderPlay(d.best_play_income, false);
+
+    if (d.cardapio_income?.length) {
+      html += `<div class="block-title">TACTICAL MENU</div><div class="tac-grid">`;
+      d.cardapio_income.forEach(s => {
+        html += `<div class="tac-card ${!s.is_valid?'t-err':'t-hdg'}">
+          <div class="t-head"><div><div class="t-type" style="color:var(--warn)">TACTIC</div><div class="t-name">${s.nome}</div></div></div>
+          <div class="sn-legs" style="background:transparent;padding:0;border:none;margin-bottom:16px;">
+            ${s.legs.map(l=>`<div class="leg-row"><span class="l-act ${l.acao.includes('COMPRA')?'buy':'sell'}">${l.acao}</span><span class="l-asset mono">${l.tipo} $${l.strike}</span><span class="l-price-audited mono">${l.preco_real!=null?'$'+l.preco_real:'?'}</span></div>`).join('')}
+          </div>
+          ${s.is_valid ? `<div class="metrics-grid">
+            <div class="m-cell"><div class="m-lbl">${s.flow_label}</div><div class="m-val mono ${s.flow_type==='CREDIT'?'m-credit':'m-debit'}">$${s.flow_val}</div></div>
+            <div class="m-cell"><div class="m-lbl">Risco Máx</div><div class="m-val mono m-danger">${s.max_loss==='SPOT'?'SPOT':'$'+s.max_loss}</div></div>
+            <div class="m-cell"><div class="m-lbl">Yield/ROI</div><div class="m-val mono"><span class="badge-yield">${s.roi_pct}</span></div></div>
+          </div>` : ''}
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`; // end tabIncome
+
+    // VERDICT
+    if (d.conclusao) {
+      html += `
+        <div class="verdict-box">
+          <div class="v-title">🎯 VEREDITO DA MESA</div>
+          <div class="v-text" style="font-size:13px;text-align:left">
+            <div style="margin-bottom:12px"><strong style="color:var(--accent)">MELHOR ESTRUTURA:</strong><br>${d.conclusao.melhor_estrutura||'--'}</div>
+            <div style="margin-bottom:12px"><strong style="color:var(--accent2)">CENÁRIO NECESSÁRIO:</strong><br>${d.conclusao.cenario_necessario||'--'}</div>
+            <div><strong style="color:var(--warn)">ALTERNATIVA DEFENSIVA:</strong><br>${d.conclusao.alternativa_defensiva||'--'}</div>
+          </div>
+        </div>`;
+    }
   }
 
-  const res = document.getElementById('result'); res.innerHTML = html; res.classList.add('active');
+  html += `<div style="margin-top:32px;padding:16px;border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text3);line-height:1.6;text-align:center;">⚠ AVISO DE RISCO — Este sistema é exclusivamente educacional. Opções de criptomoedas envolvem risco de perda total do capital investido. Nenhuma análise aqui constitui recomendação de investimento.</div>`;
+
+  const res = document.getElementById('result');
+  res.innerHTML = html; res.classList.add('active');
+  setTimeout(() => res.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
 }
 </script>
 </body>
 </html>
-
-
